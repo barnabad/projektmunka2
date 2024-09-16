@@ -12,8 +12,8 @@ const PORT = process.env.PORT || 3000;
 // Creating express server
 const app = express();
 
-// Currently not working
-app.use(express.static(path.join(__dirname, '../skribble-client/dist')));
+// Hosting built react frontend - otherwise it will be error
+app.use(express.static(path.join(__dirname, '../client/dist')));
 
 const expressServer = app.listen(PORT, () => {
   console.log(`listening on port ${PORT}`);
@@ -34,7 +34,7 @@ io.on('connection', socket => {
   socket.emit('message', 'Welcome User!');
 
   // Upon connection - to all others
-  socket.broadcast.emit('meesage', `User ${socket.id.substring(0, 5)} connected`)
+  socket.broadcast.emit('meesage', `User ${socket.id.substring(0, 5)} connected!`)
 
   // Listening for a message event
   socket.on('message', data => {
@@ -44,7 +44,7 @@ io.on('connection', socket => {
 
   // When user disconnects - to all others
   socket.on.apply('disconnect', () =>{
-    socket.broadcast.emit('message', `User ${socket.id.substring(0, 5)} disconnected`)
+    socket.broadcast.emit('message', `User ${socket.id.substring(0, 5)} disconnected!`)
   })
 
   // Listen for activity
