@@ -31,15 +31,11 @@ const socket = io("ws://localhost:3000");
 
 Server will send back a message to the user:
 
-```http
-  Welcome User!
-```
+>  Welcome User!
 
 Server will send back a message to other users:
 
-```http
-  User IXkj5 connected!
-```
+>  User IXkj5 connected!
 
 ### Send message:
 
@@ -49,9 +45,7 @@ socket.emit("message", "<your message>");
 
 Server will emit message to everyone, including sender:
 
-```http
-  IXkj5: <your message>
-```
+>  IXkj5: \<your message>
 
 ### Listen for message:
 
@@ -86,6 +80,4 @@ Use this if you want to get notified when someone starts typing:
 
 Server will broadcast message to everyone:
 
-```http
-  User IXkj5 disconnected!
-```
+>  User IXkj5 disconnected!
