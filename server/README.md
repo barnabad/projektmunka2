@@ -1,51 +1,59 @@
 # Express js backend
 
-The server hosts a static page under "../client/dist".
+In deployement the server hosts a static page under "../client/dist".<br>
+A szerver egy statikus weboldalt fog hosztolni éles környezetben a : "../client/dist" alatt.
 
 ## Test
 
-Install projektmunka server with npm:
+Install node modules with npm:<br>
+Telepítsd a node csomagokat npm-el:
 
 ```bash
   cd projektmunka/server
   npm i
 ```
 
-then run:
+then run:<br>
+majd futtasd:
 
 ```bash
   npm run dev
 ```
 
-Websocket is on: **localhost:3000**
+Websocket port: **localhost:3000**<br>
+Valós idejű kommunikáció: **localhost:3000**
 
-Cors is allowed from port: **5173**
+Allowed (for vite testing) port: **5173**<br>
+Tesztelés miatt megengedett port: **5173**
 
 ## Websocket reference
 
 ### Connect to websocket:
 
 ```js
-const socket = io("ws://localhost:3000");
+const socket = io('ws://localhost:3000');
 ```
 
-Server will send back a message to the user:
+Server will send back a message to the user:<br>
+A szerver egy üzenetet fog visszaküldeni a becsatlakozott felhasználónak:
 
->  Welcome User!
+> Welcome User!
 
-Server will send back a message to other users:
+Server will send a message to other users:<br>
+Emellett a szerver egy üzenetet fog küldeni a másik felhasználóknak:
 
->  User IXkj5 connected!
+> User IXkj5 connected!
 
 ### Send message:
 
 ```js
-socket.emit("message", "<your message>");
+socket.emit('message', '<your message>');
 ```
 
-Server will emit message to everyone, including sender:
+Server will emit message to everyone, including sender:<br>
+A szerver egy üzenetet fog küldeni mindekinek:
 
->  IXkj5: \<your message>
+> IXkj5: \<your message>
 
 ### Listen for message:
 
@@ -55,7 +63,8 @@ Server will emit message to everyone, including sender:
 
 ### Displaying activity:
 
-Place this into an eventListener to emit a message when a user is typing:
+Place this into an eventListener to emit a message when a user is typing:<br>
+Minta, ha szeretnél egy üzentet küldeni, ha a felhasználó gépel:
 
 ```js
   <your div>.addEventListener('keypress', () => {
@@ -63,7 +72,8 @@ Place this into an eventListener to emit a message when a user is typing:
   })
 ```
 
-Use this if you want to get notified when someone starts typing:
+Use this if you want to get notified when someone starts typing:<br>
+Minta, ha szeretnéd, hogy értesülve legyen a felhasználó, ha más gépel:
 
 ```js
   let activityTimer
@@ -78,6 +88,7 @@ Use this if you want to get notified when someone starts typing:
 
 ### Upon disconnection:
 
-Server will broadcast message to everyone:
+Server will broadcast message to everyone:<br>
+A szerver mindekinek el fogja küldeni:
 
->  User IXkj5 disconnected!
+> User IXkj5 disconnected!
