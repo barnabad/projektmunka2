@@ -4,7 +4,7 @@ import { setupSockets } from './sockets/setup.js';
 
 const PORT = process.env.PORT || 3000;
 
-// Creating express server
+// Express szerver létrehozása
 const app = express();
 
 // Statikus fájlok kiszolgálása
@@ -14,11 +14,11 @@ const server = app.listen(PORT, () => {
   console.log(`listening on port ${PORT}`);
 });
 
-// Creating websocket
+// Websocket létrehozása
 const io = new SocketIo(server, {
   cors: { origin: process.env.NODE_ENV === 'production' ? false: 
     ['http://localhost:5173', 'http://127.0.0.1:5173']}
   });
 
-// Socket.io beállítása
+// Websocket beállítása
 setupSockets(io);

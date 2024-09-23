@@ -1,4 +1,4 @@
-// UsersState class to encapsulate user state management
+// Felhasználók adatainak tárolása a memóriában
 class UsersState {
   constructor() {
     this.users = [];
