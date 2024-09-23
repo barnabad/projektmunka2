@@ -1,6 +1,14 @@
 import React from "react";
-import Message from "./Message";
 import useStore from "../store";
+
+function Message({ index, name, message }) {
+  return (
+    <div className={`p-1 border-b-2 border-zinc-600`}>
+      <div className="font-semibold">{name}</div>
+      <div>{message}</div>
+    </div>
+  );
+}
 
 function ChatPanel() {
   const { messages } = useStore();

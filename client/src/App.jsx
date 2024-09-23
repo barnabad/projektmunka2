@@ -5,8 +5,8 @@ import LandingPage from "./components/LandingPage";
 function App() {
   return (
     <div className="bg-zinc-900 flex-grow flex text-white items-center justify-center">
-      { /*<GameWrapper />*/}
-      { <LandingPage /> }
+      { <GameWrapper />}
+      {/* { <LandingPage /> } */}
     </div>
   );
 }

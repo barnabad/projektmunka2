@@ -1,6 +1,45 @@
 import { Eraser, PaintBucket, Pencil, Trash2 } from "lucide-react";
 import { useState } from "react";
 
+const colorNames = [
+  [
+    "white",
+    "gray-400",
+    "red-400",
+    "orange-400",
+    "yellow-400",
+    "green-400",
+    "sky-400",
+    "blue-400",
+    "purple-400",
+    "pink-400",
+    "orange-700",
+  ],
+  [
+    "black",
+    "gray-700",
+    "red-700",
+    "orange-500",
+    "yellow-600",
+    "green-950",
+    "sky-900",
+    "blue-950",
+    "purple-950",
+    "pink-900",
+    "orange-950",
+  ],
+];
+
+function ColorBlock({ colorName, setSelectedColor }) {
+  return (
+    <div
+      className={`w-[25px] bg-${colorName}`}
+      data-color={colorName}
+      onClick={(e) => setSelectedColor(e.target.dataset.color)}
+    ></div>
+  );
+}
+
 function BottomPanel({ allRounds, currentRound }) {
   const [selectedColor, setSelectedColor] = useState("black");
 
@@ -15,118 +54,22 @@ function BottomPanel({ allRounds, currentRound }) {
         ></div>
         <div className="border-2 border-zinc-600 rounded-lg overflow-hidden cursor-pointer">
           <div className="h-[25px] flex">
-            <div
-              className="w-[25px] bg-white"
-              data-color="white"
-              onClick={(e) => setSelectedColor(e.target.dataset.color)}
-            ></div>
-            <div
-              className="w-[25px] bg-gray-400"
-              data-color="gray-400"
-              onClick={(e) => setSelectedColor(e.target.dataset.color)}
-            ></div>
-            <div
-              className="w-[25px] bg-red-400"
-              data-color="red-400"
-              onClick={(e) => setSelectedColor(e.target.dataset.color)}
-            ></div>
-            <div
-              className="w-[25px] bg-orange-400"
-              data-color="orange-400"
-              onClick={(e) => setSelectedColor(e.target.dataset.color)}
-            ></div>
-            <div
-              className="w-[25px] bg-yellow-400"
-              data-color="yellow-400"
-              onClick={(e) => setSelectedColor(e.target.dataset.color)}
-            ></div>
-            <div
-              className="w-[25px] bg-green-400"
-              data-color="green-400"
-              onClick={(e) => setSelectedColor(e.target.dataset.color)}
-            ></div>
-            <div
-              className="w-[25px] bg-sky-400"
-              data-color="sky-400"
-              onClick={(e) => setSelectedColor(e.target.dataset.color)}
-            ></div>
-            <div
-              className="w-[25px] bg-blue-400"
-              data-color="blue-400"
-              onClick={(e) => setSelectedColor(e.target.dataset.color)}
-            ></div>
-            <div
-              className="w-[25px] bg-purple-400"
-              data-color="purple-400"
-              onClick={(e) => setSelectedColor(e.target.dataset.color)}
-            ></div>
-            <div
-              className="w-[25px] bg-pink-400"
-              data-color="pink-400"
-              onClick={(e) => setSelectedColor(e.target.dataset.color)}
-            ></div>
-            <div
-              className="w-[25px] bg-orange-700"
-              data-color="orange-700"
-              onClick={(e) => setSelectedColor(e.target.dataset.color)}
-            ></div>
+            {colorNames[0].map((item) => (
+              <ColorBlock
+                key={item}
+                colorName={item}
+                setSelectedColor={setSelectedColor}
+              />
+            ))}
           </div>
           <div className="h-[25px] flex">
-            <div
-              className="w-[25px] bg-black"
-              data-color="black"
-              onClick={(e) => setSelectedColor(e.target.dataset.color)}
-            ></div>
-            <div
-              className="w-[25px] bg-gray-700"
-              data-color="gray-700"
-              onClick={(e) => setSelectedColor(e.target.dataset.color)}
-            ></div>
-            <div
-              className="w-[25px] bg-red-700"
-              data-color="red-700"
-              onClick={(e) => setSelectedColor(e.target.dataset.color)}
-            ></div>
-            <div
-              className="w-[25px] bg-orange-500"
-              data-color="orange-500"
-              onClick={(e) => setSelectedColor(e.target.dataset.color)}
-            ></div>
-            <div
-              className="w-[25px] bg-yellow-600"
-              data-color="yellow-600"
-              onClick={(e) => setSelectedColor(e.target.dataset.color)}
-            ></div>
-            <div
-              className="w-[25px] bg-green-950"
-              data-color="green-950"
-              onClick={(e) => setSelectedColor(e.target.dataset.color)}
-            ></div>
-            <div
-              className="w-[25px] bg-sky-900"
-              data-color="sky-900"
-              onClick={(e) => setSelectedColor(e.target.dataset.color)}
-            ></div>
-            <div
-              className="w-[25px] bg-blue-950"
-              data-color="blue-950"
-              onClick={(e) => setSelectedColor(e.target.dataset.color)}
-            ></div>
-            <div
-              className="w-[25px] bg-purple-950"
-              data-color="purple-950"
-              onClick={(e) => setSelectedColor(e.target.dataset.color)}
-            ></div>
-            <div
-              className="w-[25px] bg-pink-900"
-              data-color="pink-900"
-              onClick={(e) => setSelectedColor(e.target.dataset.color)}
-            ></div>
-            <div
-              className="w-[25px] bg-orange-950"
-              data-color="orange-950"
-              onClick={(e) => setSelectedColor(e.target.dataset.color)}
-            ></div>
+            {colorNames[1].map((item) => (
+              <ColorBlock
+                key={item}
+                colorName={item}
+                setSelectedColor={setSelectedColor}
+              />
+            ))}
           </div>
         </div>
 
