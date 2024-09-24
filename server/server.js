@@ -1,5 +1,6 @@
 import express from 'express';
 import { Server as SocketIo } from 'socket.io';
+import { instrument } from "@socket.io/admin-ui";
 import { setupSockets } from './sockets/setup.js';
 
 const PORT = process.env.PORT || 3000;
@@ -19,6 +20,10 @@ const io = new SocketIo(server, {
   cors: { origin: process.env.NODE_ENV === 'production' ? false: 
     ['http://localhost:5173', 'http://127.0.0.1:5173']}
   });
+
+if (process.env.NODE_ENV !== 'production') {
+  instrument(io, {auth: false, mode: "development",});
+};
 
 // Websocket beállítása
 setupSockets(io);

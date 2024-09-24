@@ -1,7 +1,10 @@
 # Express js backend
 
-In deployement the server hosts a static page under "../client/dist".<br>
-A szerver egy statikus weboldalt fog hosztolni éles környezetben a : "../client/dist" alatt.
+Chat alkalmazás tutorial videó:<br>
+https://youtube.com/playlist?list=PL0Zuz27SZ-6NOkbTDxKi7grs_oxJhLu07&si=8bg-HJ0wOWEvA_gX
+
+In deployement the server hosts a static page under "./public".<br>
+A szerver egy statikus weboldalt fog hosztolni éles környezetben a : "./public" alatt.
 
 ## Test
 

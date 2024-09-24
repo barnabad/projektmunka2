@@ -4,11 +4,11 @@ import {
   getUser,
   getUsersInRoom,
   getAllActiveRooms,
-} from '../states/usersState.js';
-import { onDrawSocket } from './draw.js';
+} from '../data/userData.js';
+import { drawSocket } from './draw.js';
+import { roomSocket } from './room.js';
 
 const ADMIN = 'Admin';
-
 
 // Websocket beállítása
 export function setupSockets(io) {
@@ -30,8 +30,18 @@ export function setupSockets(io) {
     // Aktivitás során
     socket.on('activity', (name) => listenActivity(socket, name));
 
-    // Rajz során
-    onDrawSocket(socket);
+    // Szobába csatlakozás
+    // Jakab feladata
+    roomSocket(socket);
+
+    // Rajzolós funkció
+    drawSocket(socket);
+
+    // Üzenetküldő funkció
+
+    // Pontszám funkció
+
+    // Random szó funkció
   });
 }
 
