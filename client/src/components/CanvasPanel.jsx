@@ -10,7 +10,7 @@ function CanvasPanel() {
         className="bg-white w-full h-auto"
       ></canvas>
 
-      {/* <CanvasOverlay isChoosing={true} /> */}
+      <CanvasOverlay isChoosing={true} />
     </div>
   );
 }

@@ -4,7 +4,6 @@ export default {
   theme: {
     extend: {},
   },
-  plugins: [require("daisyui")],
   safelist: [
     "bg-white",
     "bg-gray-400",

@@ -1,5 +1,5 @@
 import React from "react";
-import useStore from "../store";
+import { solution } from "../../testData";
 
 function Letter({ value, show }) {
   return (
@@ -14,14 +14,12 @@ function Letter({ value, show }) {
 }
 
 function SolutionWord() {
-  const { currentWord } = useStore();
-
   return (
     <div className="flex gap-1 self-end flex-grow justify-center p-3">
-      {currentWord.map((item, index) => (
+      {solution.map((item, index) => (
         <Letter key={index} value={item.letter} show={item.show} />
       ))}
-      <sub className="text-white">{currentWord.length}</sub>
+      <sub className="text-white">{solution.length}</sub>
     </div>
   );
 }

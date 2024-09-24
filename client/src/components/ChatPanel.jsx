@@ -1,5 +1,5 @@
 import React from "react";
-import useStore from "../store";
+import { messages } from "../../testData";
 
 function Message({ index, name, message }) {
   return (
@@ -11,8 +11,6 @@ function Message({ index, name, message }) {
 }
 
 function ChatPanel() {
-  const { messages } = useStore();
-
   return (
     <div className="flex-shrink-0 w-[275px] flex flex-col bg-zinc-700 p-3 rounded-lg gap-3 h-[600px]">
       <div className="flex-grow bg-zinc-700 pr-1 flex flex-col gap-[1px] rounded-lg overflow-auto">
