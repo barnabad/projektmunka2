@@ -6,13 +6,13 @@ const UsersData = {
   },
 };
 
-export function activateUser(id, name, room) {
-  const user = { id, name, room };
+export function createUser(id, name, score) {
+  const user = { id, name, score };
   UsersData.setUsers([...UsersData.users.filter((user) => user.id !== id), user]);
   return user;
 }
 
-export function userLeavesApp(id) {
+export function removeUser(id) {
   UsersData.setUsers(UsersData.users.filter((user) => user.id !== id));
 }
 
@@ -20,10 +20,8 @@ export function getUser(id) {
   return UsersData.users.find((user) => user.id === id);
 }
 
-export function getUsersInRoom(room) {
-  return UsersData.users.filter((user) => user.room === room);
-}
-
-export function getAllActiveRooms() {
-  return Array.from(new Set(UsersData.users.map((user) => user.room)));
+export function setScore(id) {
+  const name = getUser(id).name;
+  const user = { id, name, score };
+  UsersData.setUsers([...UsersData.users.filter((user) => user.id !== id), user]);
 }
