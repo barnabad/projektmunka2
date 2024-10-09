@@ -1,7 +1,7 @@
 import { Server as SocketIoServer, Socket } from 'socket.io';
-//import { getUser } from '../data/Data';
+import { RoomContainer } from './setup.js';
 
-export function gamePlaySocket(socket: Socket) {
+export function gamePlaySocket(socket: Socket, ROOMS: RoomContainer) {
   socket.on('draw', (data) => listenOnDraw(socket));
 
   socket.on('startGame', (data) => startGame(socket));

@@ -3,13 +3,9 @@ import { Server as HttpServer } from "http";
 import { Server as SocketIoServer } from "socket.io";
 import { instrument } from "@socket.io/admin-ui";
 import { setupSockets } from "./sockets/setup.js";
-import { Room } from "./models/RoomClass.js";
 import { socketConfig } from "./config/socketConfig.js";
 
 const PORT: number = Number(process.env.PORT) || 3000;
-
-export type RoomContainer = Map<string, Room>;
-let ROOMS: RoomContainer = new Map();
 
 // Express server creation
 const app: Application = express();
@@ -30,4 +26,3 @@ if (process.env.NODE_ENV !== "production") {
 
 // Setting up WebSocket
 setupSockets(io);
-// 

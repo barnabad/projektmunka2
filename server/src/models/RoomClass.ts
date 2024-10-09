@@ -1,8 +1,7 @@
-import { Player } from "./PlayerClass.js";
+import { Player } from './PlayerClass.js';
 
 export class Room {
-  roomId: string;
-  language: "english" | "hungarian";
+  language: 'english' | 'hungarian';
   maxPlayers: number;
   maxRound: number;
   drawTime: number;
@@ -13,22 +12,33 @@ export class Room {
   drawersList: string[]; // Játékosok akik rajzolhatnak az adott körben
 
   constructor(
-    roomId: string,
-    language: "english" | "hungarian",
+    language: 'english' | 'hungarian',
     maxPlayers: number,
     maxRound: number,
     drawTime: number,
     ownerId: string,
+    players: Player[]
   ) {
-    this.roomId = roomId;
     this.language = language;
     this.maxPlayers = maxPlayers;
     this.maxRound = maxRound;
     this.drawTime = drawTime;
     this.ownerId = ownerId;
-    this.playersList = new Array(owner);
+    this.playersList = players;
     this.currentRound = 1;
-    this.currentDrawer = ownerId;
-    this.drawersList = new Array(ownerId);
+    this.currentDrawer = '';
+    this.drawersList = [ownerId];
+  }
+
+  addPlayer(newPlayer: Player){
+    this.playersList.push(newPlayer);
+  }
+
+  removePlayer(id: string){
+    this.playersList = this.playersList.filter((player) => player.playerId !== id);  
+  }
+
+  containsPlayer(id: string): boolean {
+    return this.playersList.some((player) => player.playerId === id);
   }
 }
