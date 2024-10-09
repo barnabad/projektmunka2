@@ -18,8 +18,7 @@ export class Room {
     maxPlayers: number,
     maxRound: number,
     drawTime: number,
-    owner: Player,
-    ownerId: string
+    ownerId: string,
   ) {
     this.roomId = roomId;
     this.language = language;

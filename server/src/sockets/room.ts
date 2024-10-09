@@ -1,18 +1,26 @@
-// Jakab feladata
-
 import { Socket } from "socket.io";
 
-// Meglevő szoba lérehozásával/kilépésével foglalkozó kódokat
-// a "setup.js"-ből ide kéne átrakni
-
 export function roomSocket(socket: Socket) {
-  
-  // Szoba létrehozása
-  // ilyen szoba azonosítót kéne létrehozni:
-  // https://developer.mozilla.org/en-US/docs/Web/API/Crypto/randomUUID
-  
-  // Szoba csatlakozás
-  //socket.on('joinRoom', ({name, roomCode}) => {
-  
-  // Szoba kilépés
+  socket.on("create-room", () => {});
+
+  //socket.on("join-room");
+  //socket.on("disconnect");
+}
+
+// Functions
+
+type CreateRoomType = {
+  name: string;
+  options: {
+    maxRounds: number;
+    maxPlayers: number;
+    drawTime: number;
+    language: "hungarian" | "english";
+  };
+};
+
+function createRoom({ name, options }: CreateRoomType) {
+  const roomId = Math.floor(Math.random() * 100);
+
+
 }
