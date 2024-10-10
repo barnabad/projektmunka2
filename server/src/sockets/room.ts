@@ -12,9 +12,7 @@ export function roomSocket(io: Server, socket: Socket, ROOMS: RoomContainer) {
     joinRoom(io, socket, ROOMS, roomId, name)
   );
 
-  socket.on("leave-room", (roomId: string) =>
-    leaveRoom(io, socket, ROOMS, roomId)
-  );
+  socket.on("leave-room", () => leaveRoom(io, socket, ROOMS));
 }
 
 // Functions
@@ -52,7 +50,6 @@ function createRoom(
         [new Player(socket.id, name)]
       )
     );
-
     // Kliens értesítése
     joinSuccessful(socket, socket.id, roomId);
     updatePlayers(io, roomId, ROOMS.get(roomId)!.playersList);
@@ -94,18 +91,18 @@ function joinRoom(
   }
 }
 
-function leaveRoom(
-  io: Server,
-  socket: Socket,
-  ROOMS: RoomContainer,
-  roomId: string
-) {
-  const room = ROOMS.get(roomId)!;
+export function leaveRoom(io: Server, socket: Socket, ROOMS: RoomContainer) {
+  const roomsList = Array.from(ROOMS);
+  roomsList.forEach((room) => {
+    if (room[1].containsPlayer(socket.id)) {
+      ROOMS.get(room[0])!.removePlayer(socket.id);
 
-  if (room.containsPlayer(roomId)) {
-    room.removePlayer(socket.id);
-    updatePlayers(io, roomId, room.playersList);
-  }
+      if (!deleteRoom(ROOMS, room[0])) {
+        updatePlayers(io, room[0], room[1].playersList);
+      }
+      return;
+    }
+  });
 }
 
 // Játékos értesítése
@@ -116,4 +113,13 @@ function joinSuccessful(socket: Socket, ownerId: string, roomCode: string) {
 // Szobában levők értesítése
 function updatePlayers(io: Server, roomId: string, players: Player[]) {
   io.to(roomId).emit("updated-players", players);
+}
+
+function deleteRoom(ROOMS: RoomContainer, roomId: string): boolean | undefined {
+  let result: boolean | undefined;
+  if (ROOMS.get(roomId)?.playersList.length === 0) {
+    result = ROOMS.delete(roomId);
+    console.log("Room deleted with id: ", roomId);
+  }
+  return result;
 }

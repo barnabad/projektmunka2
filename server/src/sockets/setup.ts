@@ -1,15 +1,15 @@
-import { Server as SocketIoServer, Socket } from 'socket.io';
-import { Room } from '../models/RoomClass.js';
-import { gamePlaySocket } from './gameplay.js';
-import { roomSocket } from './room.js';
+import { Server as SocketIoServer, Socket } from "socket.io";
+import { Room } from "../models/RoomClass.js";
+import { gamePlaySocket } from "./gameplay.js";
+import { roomSocket, leaveRoom } from "./room.js";
 
-const ADMIN = 'Admin';
+const ADMIN = "Admin";
 export type RoomContainer = Map<string, Room>;
 let ROOMS: RoomContainer = new Map();
 
 // Websocket beállítása
 export function setupSockets(io: SocketIoServer) {
-  io.on('connection', (socket: Socket) => {
+  io.on("connection", (socket: Socket) => {
     console.log(`User ${socket.id} connected`);
 
     // Szobába csatlakozás
@@ -18,6 +18,9 @@ export function setupSockets(io: SocketIoServer) {
     // Játékmenet
     gamePlaySocket(socket, ROOMS);
 
-    socket.on('disconnect', () => console.log(`User ${socket.id} disconnected`));
+    socket.on("disconnect", () => {
+      console.log(`User ${socket.id} disconnected`);
+      leaveRoom(io, socket, ROOMS);
+    });
   });
 }
