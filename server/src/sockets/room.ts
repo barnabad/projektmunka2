@@ -35,8 +35,11 @@ function createRoom(
   { name, options }: CreateRoomType,
   ROOMS: RoomContainer
 ) {
+  // TODO: random szoba id létrehozása
   const roomId: string = Math.floor(Math.random() * 100).toString();
+
   try {
+    // Szoba létrehozás és csatlakozás
     socket.join(roomId);
     ROOMS.set(
       roomId,
@@ -49,11 +52,12 @@ function createRoom(
         [new Player(socket.id, name)]
       )
     );
-    socket.emit("join-successful", {
-      ownerId: socket.id,
-      roomCode: roomId,
-    });
-    io.to(roomId).emit("updated-players", ROOMS.get(roomId)?.playersList);
+
+    // Kliens értesítése
+    joinSuccessful(socket, socket.id, roomId);
+    updatePlayers(io, roomId, ROOMS.get(roomId)!.playersList);
+
+    // Hiba kiiratása console-ra
   } catch (error) {
     console.log("Error in create-room", error);
   }
@@ -66,23 +70,22 @@ function joinRoom(
   roomId: string,
   name: string
 ) {
-  console.log(roomId);
   const room = ROOMS.get(roomId);
 
   if (room) {
+    // Ellenőrzi van-e elég férőhely a szobában
     if (room.playersList.length === room.maxPlayers) {
       console.log(`Room: ${roomId} is already full`);
       return;
     }
+
+    // Szobába csatlakozás
     try {
       socket.join(roomId);
       room.addPlayer(new Player(socket.id, name));
-      socket.emit("join-successful", {
-        ownerId: room.ownerId,
-        roomCode: roomId,
-      });
-      io.to(roomId).emit("updated-players", room.playersList);
-      // Majom123 has joined room
+      joinSuccessful(socket, socket.id, roomId);
+      updatePlayers(io, roomId, room.playersList);
+      // JohnDoe123 has joined room
     } catch (error) {
       console.error("Error joining room", error);
     }
@@ -101,6 +104,16 @@ function leaveRoom(
 
   if (room.containsPlayer(roomId)) {
     room.removePlayer(socket.id);
-    io.to(roomId).emit("updated-players", room.playersList);
+    updatePlayers(io, roomId, room.playersList);
   }
+}
+
+// Játékos értesítése
+function joinSuccessful(socket: Socket, ownerId: string, roomCode: string) {
+  socket.emit("join-successful", { ownerId: ownerId, roomCode: roomCode });
+}
+
+// Szobában levők értesítése
+function updatePlayers(io: Server, roomId: string, players: Player[]) {
+  io.to(roomId).emit("updated-players", players);
 }
