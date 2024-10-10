@@ -2,6 +2,7 @@ import { Socket, Server } from "socket.io";
 import { RoomContainer } from "./setup.js";
 import { Room } from "../models/RoomClass.js";
 import { Player } from "../models/PlayerClass.js";
+import { sendError } from "../utils/notifications.js";
 
 export function roomSocket(io: Server, socket: Socket, ROOMS: RoomContainer) {
   socket.on("create-room", (data: CreateRoomType) =>
@@ -56,6 +57,7 @@ function createRoom(
 
     // Hiba kiiratása console-ra
   } catch (error) {
+    sendError(socket, "Error creating room");
     console.log("Error in create-room", error);
   }
 }
@@ -72,6 +74,7 @@ function joinRoom(
   if (room) {
     // Ellenőrzi van-e elég férőhely a szobában
     if (room.playersList.length === room.maxPlayers) {
+      sendError(socket, "Room is already full");
       console.log(`Room: ${roomId} is already full`);
       return;
     }
@@ -84,9 +87,11 @@ function joinRoom(
       updatePlayers(io, roomId, room.playersList);
       // JohnDoe123 has joined room
     } catch (error) {
+      sendError(socket, "Error joining room");
       console.error("Error joining room", error);
     }
   } else {
+    sendError(socket, "Room doesn't exist");
     console.error(`Room with id ${roomId} does not exist`);
   }
 }

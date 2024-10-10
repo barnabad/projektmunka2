@@ -1,5 +1,4 @@
 import CanvasOverlay from "./CanvasOverlay";
-import { useState, useRef, useEffect } from "react";
 
 function CanvasPanel() {
   return (
