@@ -94,7 +94,7 @@ function JoinDropdown() {
   const handleJoin = () => {
     if (name && roomCode) {
       socket.emit("join-room", { roomId: roomCode, name: name });
-    } else toast.error("Name or Room Code missing xxd 4!!!");
+    } else toast.error("Name or Room Code missing");
   };
 
   return (

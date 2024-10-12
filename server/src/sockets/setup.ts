@@ -2,6 +2,7 @@ import { Server as SocketIoServer, Socket } from "socket.io";
 import { Room } from "../models/RoomClass.js";
 import { gamePlaySocket } from "./gameplay.js";
 import { roomSocket, leaveRoom } from "./room.js";
+import { chatSocket } from "./chat.js";
 
 const ADMIN = "Admin";
 export type RoomContainer = Map<string, Room>;
@@ -17,6 +18,9 @@ export function setupSockets(io: SocketIoServer) {
 
     // Játékmenet
     gamePlaySocket(socket, ROOMS);
+
+    // Chat funkciók
+    chatSocket(io, socket, ROOMS);
 
     socket.on("disconnect", () => {
       console.log(`User ${socket.id} disconnected`);

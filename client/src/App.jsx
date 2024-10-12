@@ -6,8 +6,14 @@ import { useEffect } from "react";
 import toast, { Toaster } from "react-hot-toast";
 
 function App() {
-  const { myRoomId, setMyRoomId, setMySocketId, setOwnerId, setPlayers } =
-    useStore();
+  const {
+    myRoomId,
+    setMyRoomId,
+    setMySocketId,
+    setOwnerId,
+    setPlayers,
+    setChatMessages,
+  } = useStore();
 
   useEffect(() => {
     socket.on("connect", () => setMySocketId(socket.id));
@@ -19,6 +25,9 @@ function App() {
     socket.on("connect_error", () => toast.error("Connection error"));
     socket.on("error", (error) => toast.error(error));
     socket.on("updated-players", (players) => setPlayers(players));
+    socket.on("new-message", (msgData) => {
+      setChatMessages(msgData);
+    });
 
     return () => {
       socket.off("connect");
@@ -26,6 +35,7 @@ function App() {
       socket.off("error");
       socket.off("join-successful");
       socket.off("updated-players");
+      socket.off("new-message");
     };
   }, []);
 

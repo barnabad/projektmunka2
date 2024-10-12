@@ -1,4 +1,10 @@
-import CanvasOverlay from "./CanvasOverlay";
+import {
+  CanvasOverlay,
+  ChooseWordContent,
+  PostGameContent,
+  PreGameContent,
+  RoundEndContent,
+} from "./CanvasOverlay";
 
 function CanvasPanel() {
   return (
@@ -9,7 +15,12 @@ function CanvasPanel() {
         className="bg-white w-full h-auto"
       ></canvas>
 
-      <CanvasOverlay isChoosing={true} />
+      <CanvasOverlay>
+        {/* <PreGameContent /> */}
+        {/* <ChooseWordContent isChoosing={true} /> */}
+        {/* <RoundEndContent/> */}
+        {/* <PostGameContent/> */}
+      </CanvasOverlay>
     </div>
   );
 }
