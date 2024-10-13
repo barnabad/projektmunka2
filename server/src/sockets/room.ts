@@ -3,6 +3,7 @@ import { RoomContainer } from "./setup.js";
 import { Room } from "../models/RoomClass.js";
 import { Player } from "../models/PlayerClass.js";
 import { sendError } from "../utils/notifications.js";
+import { sendConnectionMsg } from "./chat.js";
 
 export function roomSocket(io: Server, socket: Socket, ROOMS: RoomContainer) {
   socket.on("create-room", (data: CreateRoomType) =>
@@ -54,7 +55,7 @@ function createRoom(
     // Kliens értesítése
     joinSuccessful(socket, socket.id, roomId);
     updatePlayers(io, roomId, ROOMS.get(roomId)!.playersList);
-
+    sendConnectionMsg(io, roomId, name, true);
     // Hiba kiiratása console-ra
   } catch (error) {
     sendError(socket, "Error creating room");
@@ -83,8 +84,9 @@ function joinRoom(
     try {
       socket.join(roomId);
       room.addPlayer(new Player(socket.id, name));
-      joinSuccessful(socket, socket.id, roomId);
+      joinSuccessful(socket, room.ownerId, roomId);
       updatePlayers(io, roomId, room.playersList);
+      sendConnectionMsg(io, roomId, name, true);
       // JohnDoe123 has joined room
     } catch (error) {
       sendError(socket, "Error joining room");
@@ -100,10 +102,11 @@ export function leaveRoom(io: Server, socket: Socket, ROOMS: RoomContainer) {
   const roomsList = Array.from(ROOMS);
   roomsList.forEach((room) => {
     if (room[1].containsPlayer(socket.id)) {
-      ROOMS.get(room[0])!.removePlayer(socket.id);
+      const removedPlayerName = ROOMS.get(room[0])!.removePlayer(socket.id);
 
       if (!deleteRoom(ROOMS, room[0])) {
         updatePlayers(io, room[0], room[1].playersList);
+        sendConnectionMsg(io, room[0], removedPlayerName, false);
       }
       return;
     }

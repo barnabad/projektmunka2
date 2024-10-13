@@ -37,10 +37,15 @@ export class Room {
     this.playersList.push(newPlayer);
   }
 
-  removePlayer(id: string) {
+  removePlayer(id: string): string {
+    const removedPlayer = this.playersList.find(
+      (player) => player.playerId === id
+    );
+
     this.playersList = this.playersList.filter(
       (player) => player.playerId !== id
     );
+    return removedPlayer!.name;
   }
 
   containsPlayer(id: string): boolean {
