@@ -17,7 +17,7 @@ export function setupSockets(io: SocketIoServer) {
     roomSocket(io, socket, ROOMS);
 
     // Játékmenet
-    gamePlaySocket(socket, ROOMS);
+    gamePlaySocket(io, socket, ROOMS);
 
     // Chat funkciók
     chatSocket(io, socket, ROOMS);

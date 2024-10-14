@@ -1,4 +1,4 @@
-export const words = [
+export const englishWords = [
   "Shoe",
   "Door",
   "Trash Can",
