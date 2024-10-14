@@ -14,7 +14,9 @@ export function gamePlaySocket(
     startGame(io, socket, roomId, ROOMS)
   );
 
-  //socket.on("choose-word", () => )
+  socket.on("receive-word", ({ roomId, word }) => {
+    ROOMS.get(roomId)!.currentWord = word;
+  });
 
   socket.on("draw", (data) => listenOnDraw(socket));
 }
@@ -27,32 +29,46 @@ function startGame(
 ) {
   const room = ROOMS.get(roomId);
 
-  // Játék indítása
+  // Játék indítása, ha jogosult rá (tulajdonos)
   if (room?.ownerId === socket.id) {
     room.drawersList = room.playersList
       .map((player) => player.playerId)
       .reverse();
     room.currentDrawer = room.drawersList[0];
     room.currentRound = 1;
-    startRound(io, roomId, room);
+    startRound(io, socket, roomId, room);
   } else {
     sendError(socket, "Only the room owner can start the game");
   }
 }
 
-function startRound(io: SocketIoServer, roomId: string, room: Room) {
-  io.to(roomId).emit("start-round");
+function startRound(
+  io: SocketIoServer,
+  socket: Socket,
+  roomId: string,
+  room: Room
+) {
+  io.in(roomId).emit("start-round");
+
   // TODO!
   // Idő elindítása
-  chooseWord(io, room);
+
+  // Szó kiválasztása
+  chooseWord(io, socket, room);
+
+  // Aktuális rajzoló frissítése mindenki számára
+  io.in(roomId).emit("update-drawer", {
+    currentDrawer: room.currentDrawer,
+    wordLength: room.currentWord.length,
+  });
 }
 
-function chooseWord(io: SocketIoServer, room: Room) {
-  const socketId = room.playersList.find(
+function chooseWord(io: SocketIoServer, socket: Socket, room: Room) {
+  const drawer = room.playersList.find(
     (player) => player.playerId === room.currentDrawer
-  )?.playerId;
+  );
 
-  if (socketId) {
+  if (drawer) {
     // Szavak megtalálása nyelvi beállítás alapján
     let words: string[] = [];
     let wordsData: string[] = [];
@@ -75,8 +91,11 @@ function chooseWord(io: SocketIoServer, room: Room) {
       !words.includes(w) ? words.push(w) : false;
     }
 
-    // to individual socketid (private message)
-    io.to(socketId).emit("choose-word", words);
+    // Rajzoló játékosnak elküldjük a szavakat
+    io.to(drawer.playerId).emit("choose-word", words);
+
+    // Mindenkit kivéve a rajzolót értesítjük az eseményről
+    socket.broadcast.emit("choosing-word", drawer.name);
   }
 }
 
