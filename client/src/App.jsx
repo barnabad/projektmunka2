@@ -13,6 +13,10 @@ function App() {
     setOwnerId,
     setPlayers,
     setChatMessages,
+    setGameState,
+    setWordOptions,
+    setDrawerId,
+    setDrawerName,
   } = useStore();
 
   useEffect(() => {
@@ -28,6 +32,12 @@ function App() {
     socket.on("new-message", (msgData) => {
       setChatMessages(msgData);
     });
+    socket.on("start-round", () => setGameState("choosing"));
+    socket.on("choose-word", (words) => setWordOptions(words));
+    socket.on("update-drawer", (data) => {
+      setDrawerId(data.drawerId);
+      setDrawerName(data.drawerName);
+    });
 
     return () => {
       socket.off("connect");
@@ -36,6 +46,9 @@ function App() {
       socket.off("join-successful");
       socket.off("updated-players");
       socket.off("new-message");
+      socket.off("start-round");
+      socket.off("choose-word");
+      socket.off("update-drawer");
     };
   }, []);
 

@@ -1,34 +1,60 @@
+import { useStore } from "../store/store";
+import { socket } from "../utils/socket";
+
 export function PreGameContent() {
+  const { ownerId, mySocketId, myRoomId } = useStore();
+
+  const handleStartGame = () => {
+    socket.emit("start-game", myRoomId);
+  };
+
   return (
     <div className="text-center text-xl">
-      <button className="p-2 shadow-lg border-zinc-600 bg-zinc-700 border-2 rounded-lg hover:border-zinc-500">
-        Start Game
-      </button>
-      <div>Waiting for game to start</div>
+      {mySocketId === ownerId ? (
+        <button
+          onClick={handleStartGame}
+          className="p-2 shadow-lg border-zinc-600 bg-zinc-700 border-2 rounded-lg hover:border-zinc-500"
+        >
+          Start Game
+        </button>
+      ) : (
+        <div>Waiting for game to start</div>
+      )}
     </div>
   );
 }
 
-export function ChooseWordContent({ isChoosing }) {
+export function ChooseWordContent() {
+  const { mySocketId, myRoomId, wordOptions, drawerId, drawerName } =
+    useStore();
+
+  const handleClick = (word) => {
+    socket.emit("receive-word", { word, roomId: myRoomId });
+  };
+
   return (
     <div>
-      {isChoosing ? (
+      {drawerId === mySocketId ? (
         <div className="z-20 flex flex-col gap-4 text-xl items-center">
           <div>Choose a word...</div>
           <div className="flex gap-2">
-            <button className="p-2 shadow-lg border-zinc-600 bg-zinc-700 border-2 rounded-lg hover:border-zinc-500">
-              alma
-            </button>
-            <button className="p-2 shadow-lg border-zinc-600 bg-zinc-700 border-2 rounded-lg hover:border-zinc-500">
-              word
-            </button>
-            <button className="p-2 shadow-lg border-zinc-600 bg-zinc-700 border-2 rounded-lg hover:border-zinc-500">
-              kutya
-            </button>
+            {wordOptions.map(
+              (
+                item // !
+              ) => (
+                <button
+                  onClick={() => handleClick(item)}
+                  key={item}
+                  className="p-2 shadow-lg border-zinc-600 bg-zinc-700 border-2 rounded-lg hover:border-zinc-500"
+                >
+                  {item}
+                </button>
+              )
+            )}
           </div>
         </div>
       ) : (
-        <div className="z-20 text-xl">Player is choosing a word...</div>
+        <div className="z-20 text-xl">{drawerName} is choosing a word...</div>
       )}
     </div>
   );

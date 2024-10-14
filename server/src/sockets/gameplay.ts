@@ -16,6 +16,7 @@ export function gamePlaySocket(
 
   socket.on("receive-word", ({ roomId, word }) => {
     ROOMS.get(roomId)!.currentWord = word;
+    console.log("the chosen one: ", word);
   });
 
   socket.on("draw", (data) => listenOnDraw(socket));
@@ -37,6 +38,7 @@ function startGame(
     room.currentDrawer = room.drawersList[0];
     room.currentRound = 1;
     startRound(io, socket, roomId, room);
+    console.log("game started");
   } else {
     sendError(socket, "Only the room owner can start the game");
   }
@@ -54,16 +56,21 @@ function startRound(
   // Idő elindítása
 
   // Szó kiválasztása
-  chooseWord(io, socket, room);
+  chooseWord(io, socket, roomId, room);
 
   // Aktuális rajzoló frissítése mindenki számára
-  io.in(roomId).emit("update-drawer", {
+  /*io.in(roomId).emit("update-drawer", {
     currentDrawer: room.currentDrawer,
     wordLength: room.currentWord.length,
-  });
+  });*/
 }
 
-function chooseWord(io: SocketIoServer, socket: Socket, room: Room) {
+function chooseWord(
+  io: SocketIoServer,
+  socket: Socket,
+  roomId: string,
+  room: Room
+) {
   const drawer = room.playersList.find(
     (player) => player.playerId === room.currentDrawer
   );
@@ -84,18 +91,20 @@ function chooseWord(io: SocketIoServer, socket: Socket, room: Room) {
         wordsData = englishWords;
         break;
     }
-
+    console.log(wordsData);
     // Három szó véletlenszerű kiválasztása
-    for (let i = 0; i < 3; i++) {
-      const w = wordsData[Math.random() * wordsData.length + 1];
-      !words.includes(w) ? words.push(w) : false;
+    while (words.length < 3) {
+      const w = wordsData[Math.floor(Math.random() * wordsData.length)];
+      !words.includes(w) && words.push(w);
     }
+    // Drawer id elküldese a népnek
+    io.to(roomId).emit("update-drawer", {
+      drawerId: drawer.playerId,
+      drawerName: drawer.name,
+    });
 
-    // Rajzoló játékosnak elküldjük a szavakat
+    // Szo elküldes csak az illetékesnek
     io.to(drawer.playerId).emit("choose-word", words);
-
-    // Mindenkit kivéve a rajzolót értesítjük az eseményről
-    socket.broadcast.emit("choosing-word", drawer.name);
   }
 }
 

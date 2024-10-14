@@ -5,8 +5,26 @@ import {
   PreGameContent,
   RoundEndContent,
 } from "./CanvasOverlay";
+import { useStore } from "../store/store";
 
 function CanvasPanel() {
+  const { gameState } = useStore();
+
+  const renderContent = () => {
+    switch (gameState) {
+      case "preGame":
+        return <PreGameContent />;
+      case "choosing":
+        return <ChooseWordContent />;
+      case "roundEnd":
+        return <RoundEndContent />;
+      case "postGame":
+        return <PostGameContent />;
+      default:
+        return <div>Valami nem jó</div>;
+    }
+  };
+
   return (
     <div className="w-[800px] h-[600px] relative flex flex-shrink-0 p-3 bg-zinc-700 rounded-lg">
       <canvas
@@ -15,12 +33,7 @@ function CanvasPanel() {
         className="bg-white w-full h-auto"
       ></canvas>
 
-      <CanvasOverlay>
-        {/* <PreGameContent /> */}
-        {/* <ChooseWordContent isChoosing={true} /> */}
-        {/* <RoundEndContent/> */}
-        {/* <PostGameContent/> */}
-      </CanvasOverlay>
+      <CanvasOverlay>{renderContent()}</CanvasOverlay>
     </div>
   );
 }
