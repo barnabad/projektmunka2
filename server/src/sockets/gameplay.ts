@@ -16,8 +16,7 @@ export function gamePlaySocket(
 
   socket.on("receive-word", ({ roomId, word }) => {
     const room = ROOMS.get(roomId);
-    if (!room!.currentWord) 
-      room!.currentWord = word;
+    if (!room!.currentWord) room!.currentWord = word.toLocaleLowerCase();
   });
 
   socket.on("draw", (data) => listenOnDraw(socket));
@@ -51,13 +50,12 @@ function startRound(
   roomId: string,
   room: Room
 ) {
-  io.in(roomId).emit("start-round");
+  io.in(roomId).emit("start-round", room.currentRound);
 
   // Szó kiválasztása
   const inputwords = chooseWord(io, socket, roomId, room);
 
-  // TODO!
-  // Várakozás
+  // Várakozás a játékosra
   const checkValue = () => {
     if (room.currentWord) {
       console.log("Az érték be van állítva: ", room.currentWord);
@@ -72,7 +70,9 @@ function startRound(
     if (!room.currentWord) {
       if (inputwords) {
         room.currentWord =
-          inputwords[Math.floor(Math.random() * inputwords!.length)];
+          inputwords[
+            Math.floor(Math.random() * inputwords!.length)
+          ].toLocaleLowerCase();
         console.log(
           "Az idő lejárt, alapértelmezett érték lett beállítva: ",
           room.currentWord
