@@ -15,8 +15,9 @@ export function gamePlaySocket(
   );
 
   socket.on("receive-word", ({ roomId, word }) => {
-    ROOMS.get(roomId)!.currentWord = word;
-    console.log("the chosen one: ", word);
+    const room = ROOMS.get(roomId);
+    if (!room!.currentWord) 
+      room!.currentWord = word;
   });
 
   socket.on("draw", (data) => listenOnDraw(socket));
@@ -52,17 +53,41 @@ function startRound(
 ) {
   io.in(roomId).emit("start-round");
 
-  // TODO!
-  // Idő elindítása
-
   // Szó kiválasztása
-  chooseWord(io, socket, roomId, room);
+  const inputwords = chooseWord(io, socket, roomId, room);
 
-  // Aktuális rajzoló frissítése mindenki számára
-  /*io.in(roomId).emit("update-drawer", {
-    currentDrawer: room.currentDrawer,
+  // TODO!
+  // Várakozás
+  const checkValue = () => {
+    if (room.currentWord) {
+      console.log("Az érték be van állítva: ", room.currentWord);
+      clearInterval(intervalId); // Ha az értéket beállították, leállítjuk az ellenőrzést
+      clearTimeout(timeoutId); // Az időzítőt is töröljük
+    } else {
+      console.log("Még nem állítottak be értéket.");
+    }
+  };
+
+  const timeoutId = setTimeout(() => {
+    if (!room.currentWord) {
+      if (inputwords) {
+        room.currentWord =
+          inputwords[Math.floor(Math.random() * inputwords!.length)];
+        console.log(
+          "Az idő lejárt, alapértelmezett érték lett beállítva: ",
+          room.currentWord
+        );
+      }
+    }
+    clearInterval(intervalId); // Ha lejárt az idő, leállítjuk az ellenőrzést
+  }, 15000);
+
+  const intervalId = setInterval(checkValue, 1000);
+
+  // Aktuális szó frissítése mindenki számára
+  io.in(roomId).emit("update-word-length", {
     wordLength: room.currentWord.length,
-  });*/
+  });
 }
 
 function chooseWord(
@@ -70,7 +95,7 @@ function chooseWord(
   socket: Socket,
   roomId: string,
   room: Room
-) {
+): string[] | undefined {
   const drawer = room.playersList.find(
     (player) => player.playerId === room.currentDrawer
   );
@@ -96,6 +121,7 @@ function chooseWord(
       const w = wordsData[Math.floor(Math.random() * wordsData.length)];
       !words.includes(w) && words.push(w);
     }
+
     // Drawer id elküldese a népnek
     io.to(roomId).emit("update-drawer", {
       drawerId: drawer.playerId,
@@ -104,6 +130,8 @@ function chooseWord(
 
     // Szo elküldes csak az illetékesnek
     io.to(drawer.playerId).emit("choose-word", words);
+
+    return words;
   }
 }
 
