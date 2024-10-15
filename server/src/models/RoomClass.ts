@@ -37,7 +37,7 @@ export class Room {
     this.playersList.push(newPlayer);
   }
 
-  removePlayer(id: string): string {
+  removePlayer(id: string): Player {
     const removedPlayer = this.playersList.find(
       (player) => player.playerId === id
     );
@@ -45,7 +45,7 @@ export class Room {
     this.playersList = this.playersList.filter(
       (player) => player.playerId !== id
     );
-    return removedPlayer!.name;
+    return removedPlayer!;
   }
 
   containsPlayer(id: string): boolean {

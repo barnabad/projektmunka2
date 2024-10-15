@@ -38,6 +38,10 @@ function App() {
       setDrawerId(data.drawerId);
       setDrawerName(data.drawerName);
     });
+    socket.on("owner-change", (newOwnerId) => {
+      setOwnerId(newOwnerId);
+      console.log("New owner selected: ", newOwnerId);
+    });
 
     return () => {
       socket.off("connect");
@@ -49,6 +53,7 @@ function App() {
       socket.off("start-round");
       socket.off("choose-word");
       socket.off("update-drawer");
+      socket.off("owner-change");
     };
   }, []);
 

@@ -102,11 +102,22 @@ export function leaveRoom(io: Server, socket: Socket, ROOMS: RoomContainer) {
   const roomsList = Array.from(ROOMS);
   roomsList.forEach((room) => {
     if (room[1].containsPlayer(socket.id)) {
-      const removedPlayerName = ROOMS.get(room[0])!.removePlayer(socket.id);
+      const removedPlayer = ROOMS.get(room[0])!.removePlayer(socket.id);
 
       if (!deleteRoom(ROOMS, room[0])) {
         updatePlayers(io, room[0], room[1].playersList);
-        sendConnectionMsg(io, room[0], removedPlayerName, false);
+        sendConnectionMsg(io, room[0], removedPlayer.name, false);
+        // Handle owner disconnect
+        if (room[1].ownerId === removedPlayer.playerId) {
+          const newOwner = room[1].playersList[0];
+          room[1].ownerId = newOwner.playerId;
+          io.to(room[0]).emit("owner-change", newOwner.playerId);
+          io.to(room[0]).emit("new-message", {
+            name: "Server Info",
+            message: `${newOwner.name} is now the room owner`,
+            senderId: "server",
+          });
+        }
       }
       return;
     }

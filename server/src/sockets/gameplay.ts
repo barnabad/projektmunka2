@@ -91,7 +91,6 @@ function chooseWord(
         wordsData = englishWords;
         break;
     }
-    console.log(wordsData);
     // Három szó véletlenszerű kiválasztása
     while (words.length < 3) {
       const w = wordsData[Math.floor(Math.random() * wordsData.length)];
