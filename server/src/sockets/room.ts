@@ -130,7 +130,7 @@ function joinSuccessful(socket: Socket, ownerId: string, roomCode: string) {
 }
 
 // Szobában levők értesítése
-function updatePlayers(io: Server, roomId: string, players: Player[]) {
+export function updatePlayers(io: Server, roomId: string, players: Player[]) {
   io.to(roomId).emit("updated-players", players);
 }
 

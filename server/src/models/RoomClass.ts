@@ -51,4 +51,8 @@ export class Room {
   containsPlayer(id: string): boolean {
     return this.playersList.some((player) => player.playerId === id);
   }
+
+  findPlayer(id: String): Player | undefined{
+    return this.playersList.find((player) => player.playerId === id);
+  }
 }
