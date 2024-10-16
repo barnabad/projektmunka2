@@ -21,7 +21,7 @@ function CanvasPanel() {
       case "postGame":
         return <PostGameContent />;
       default:
-        return <div>Valami nem jó</div>;
+        return null;
     }
   };
 
@@ -33,7 +33,9 @@ function CanvasPanel() {
         className="bg-white w-full h-auto"
       ></canvas>
 
-      <CanvasOverlay>{renderContent()}</CanvasOverlay>
+      {gameState !== "playing" && (
+        <CanvasOverlay>{renderContent()}</CanvasOverlay>
+      )}
     </div>
   );
 }

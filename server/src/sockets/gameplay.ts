@@ -60,11 +60,6 @@ function startRound(io: SocketIoServer, roomId: string, room: Room) {
   // Időzítő elindítása, ha a játékos nem választ egy szót
   // mikor választ, elindítja a normal gameplay loop-ot
   choosingWordLoop(io, roomId, room, inputwords);
-
-  // Aktuális szó frissítése mindenki számára
-  io.to(roomId).emit("update-word-length", {
-    wordLength: room.currentWord.length,
-  });
 }
 
 function choosingWordLoop(
@@ -79,6 +74,8 @@ function choosingWordLoop(
       clearInterval(intervalId); // Ha az értéket beállították, leállítjuk az ellenőrzést
       clearTimeout(timeoutId); // Az időzítőt is töröljük
       gameplayLoop(io, room, roomId);
+      // Aktuális szó frissítése mindenki számára
+      io.to(roomId).emit("update-word-length", room.currentWord.length);
     } else {
       console.log("Még nem állítottak be értéket.");
     }
@@ -94,7 +91,12 @@ function choosingWordLoop(
     room.currentWord =
       inputwords[Math.floor(Math.random() * inputwords!.length)];
     room.currentWord = room.currentWord.toLocaleLowerCase();
-    console.log("Az idő lejárt, alapértelmezett érték lett beállítva: ", room.currentWord);
+    console.log(
+      "Az idő lejárt, alapértelmezett érték lett beállítva: ",
+      room.currentWord
+    );
+    io.to(roomId).emit("update-word-length", room.currentWord.length);
+    io.to(room.currentDrawer).emit("send-solution", room.currentWord);
     clearInterval(intervalId); // Ha lejárt az idő, leállítjuk az ellenőrzést
     gameplayLoop(io, room, roomId);
   }, 15000);
@@ -110,11 +112,11 @@ function gameplayLoop(io: Server, room: Room, roomId: string) {
     io.to(roomId).emit("reveal-word", room.currentWord);
     clearInterval(Gameplayloop);
     let nextPlayer = room!.drawersList.pop();
-    room.playersList.forEach(player => {
+    room.playersList.forEach((player) => {
       player.guessed = false;
     });
     room.currentWord = "";
-    
+
     if (nextPlayer) {
       // következő játékos
       console.log("kövi játékos", nextPlayer);
@@ -130,7 +132,7 @@ function gameplayLoop(io: Server, room: Room, roomId: string) {
         room.currentRound += 1;
         room.drawersList = room.playersList.map((player) => player.playerId);
         nextPlayer = room.drawersList.pop();
-        nextPlayer ? room.currentDrawer = nextPlayer : false;
+        nextPlayer ? (room.currentDrawer = nextPlayer) : false;
         console.log("kövi kör ", room.currentRound);
         startRound(io, roomId, room);
       }

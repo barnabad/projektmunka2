@@ -4,10 +4,8 @@ import { socket } from "../utils/socket";
 import toast from "react-hot-toast";
 
 function CreateDropdown() {
-  const { name } = useStore();
-  const [maxRounds, setMaxRounds] = useState(2);
+  const { name, drawTime, setDrawTime, maxRounds, setMaxRounds } = useStore();
   const [maxPlayers, setMaxPlayers] = useState(2);
-  const [drawTime, setDrawTime] = useState(20);
   const [language, setLanguage] = useState("hungarian");
 
   const handleCreate = () => {

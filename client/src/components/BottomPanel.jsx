@@ -1,5 +1,6 @@
 import { Eraser, PaintBucket, Pencil, Trash2 } from "lucide-react";
 import { useState } from "react";
+import { useStore } from "../store/store";
 
 const colorNames = [
   [
@@ -40,13 +41,15 @@ function ColorBlock({ colorName, setSelectedColor }) {
   );
 }
 
-function BottomPanel({ allRounds, currentRound }) {
+function BottomPanel() {
+  const { round, maxRounds } = useStore();
+
   const [selectedColor, setSelectedColor] = useState("black");
 
   return (
     <div className="rounded-lg bg-zinc-700 flex gap-3">
       <div className="w-[200px] p-3 text-xl flex justify-center items-center font-semibold">
-        {`Round ${currentRound} of ${allRounds}`}
+        {`Round ${round} of ${maxRounds}`}
       </div>
       <div className="flex-grow p-3 gap-3 flex justify-center items-center">
         <div

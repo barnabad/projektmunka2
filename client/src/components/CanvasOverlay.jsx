@@ -25,11 +25,19 @@ export function PreGameContent() {
 }
 
 export function ChooseWordContent() {
-  const { mySocketId, myRoomId, wordOptions, drawerId, drawerName } =
-    useStore();
+  const {
+    mySocketId,
+    myRoomId,
+    wordOptions,
+    drawerId,
+    drawerName,
+    setCurrentWord,
+    chooseTime
+  } = useStore();
 
   const handleClick = (word) => {
     socket.emit("receive-word", { word, roomId: myRoomId });
+    setCurrentWord(word);
   };
 
   return (
@@ -52,6 +60,7 @@ export function ChooseWordContent() {
               )
             )}
           </div>
+          <div>{chooseTime}</div>
         </div>
       ) : (
         <div className="z-20 text-xl">{drawerName} is choosing a word...</div>
