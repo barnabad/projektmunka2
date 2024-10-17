@@ -1,7 +1,7 @@
 import { Brush, Crown } from "lucide-react";
 import { useStore } from "../store/store";
 
-function PlayerCard({ place, name, score, isDrawing, playerId }) {
+function PlayerCard({ place, name, score, isDrawing, playerId, isOwner }) {
   const { mySocketId } = useStore();
 
   return (
@@ -18,11 +18,11 @@ function PlayerCard({ place, name, score, isDrawing, playerId }) {
       <div className="flex justify-between">
         <div>{score} pts</div>
         <div className="flex gap-2">
-          {/* {mySocketId === ownerId && (
+          { isOwner && (
             <div>
               <Crown size={20} />
             </div>
-          )} */}
+          )}
           {isDrawing && (
             <div>
               <Brush size={20} />
@@ -35,7 +35,7 @@ function PlayerCard({ place, name, score, isDrawing, playerId }) {
 }
 
 function PlayersPanel() {
-  const { players } = useStore();
+  const { players, drawerId, ownerId } = useStore();
 
   return (
     <div className="w-[200px] overflow-hidden max-h-[600px] flex-shrink-0 bg-zinc-700 rounded-lg p-3 h-full">
@@ -47,7 +47,8 @@ function PlayersPanel() {
             place={index + 1}
             name={item.name}
             score={item.score}
-            isDrawing={false}
+            isDrawing={drawerId === item.playerId}
+            isOwner={item.playerId === ownerId}
           />
         ))}
       </div>

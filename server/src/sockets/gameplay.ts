@@ -128,6 +128,7 @@ function gameplayLoop(io: Server, room: Room, roomId: string) {
       if (room.currentRound === room.maxRound) {
         // játék vége
         console.log("jatek vege");
+        io.to(roomId).emit("game-end");
       } else {
         room.currentRound += 1;
         room.drawersList = room.playersList.map((player) => player.playerId);

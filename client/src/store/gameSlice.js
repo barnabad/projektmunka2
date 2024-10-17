@@ -32,5 +32,5 @@ export const createGameSlice = (set) => ({
   decreaseChooseTime: () =>
     set((state) => ({ chooseTime: state.chooseTime - 1 })),
   decreaseDrawTimeLeft: () =>
-    set((state) => ({ drawTime: state.drawTimeLeft - 1 })),
+    set((state) => ({ drawTimeLeft: state.drawTimeLeft - 1 })),
 });

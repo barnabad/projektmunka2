@@ -91,6 +91,15 @@ function App() {
       setCurrentWord(solution);
     });
 
+    socket.on("game-end", () => {
+      setGameState("postGame");
+
+      if (bigTime) {
+        clearInterval(bigTime);
+        setBigTime(null);
+      }
+    });
+
     return () => {
       socket.off("connect");
       socket.off("connect_error");
@@ -104,6 +113,7 @@ function App() {
       socket.off("owner-change");
       socket.off("update-word-length");
       socket.off("send-solution");
+      socket.off("game-end");
 
       if (chooseTimeInterval) {
         clearInterval(chooseTimeInterval);

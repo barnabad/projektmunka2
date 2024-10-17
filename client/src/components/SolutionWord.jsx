@@ -18,7 +18,7 @@ function SolutionWord() {
   return (
     <div className="flex gap-1 self-end flex-grow justify-center p-3">
       {currentWord
-        ? <div className="text-lg font-semibold">{currentWord}</div>
+        ? <div className="text-lg font-semibold tracking-wide">{currentWord}</div>
         : Array.from({ length: wordLength }).map((_, index) => (
             <Letter key={index} /*value={currentWord[index]}*/ />
           ))}

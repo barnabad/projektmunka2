@@ -23,7 +23,7 @@ function Message({ senderId, name, message }) {
 
 function ChatPanel() {
   const [inputText, setInputText] = useState("");
-  const { name, myRoomId, chatMessages } = useStore();
+  const { name, myRoomId, chatMessages, mySocketId, drawerId } = useStore();
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -50,10 +50,11 @@ function ChatPanel() {
       <div>
         <form onSubmit={handleSubmit}>
           <input
+            disabled={drawerId === mySocketId}
             value={inputText}
             onChange={(e) => setInputText(e.target.value)}
             placeholder="Guess something..."
-            className="w-full shadow-lg focus:outline focus:outline-2 focus:outline-zinc-500 rounded-lg p-2 bg-zinc-600 text-white"
+            className="w-full shadow-lg focus:outline focus:outline-2 focus:outline-zinc-500 rounded-lg p-2 bg-zinc-600 text-white disabled:cursor-not-allowed"
             type="text"
           />
         </form>
