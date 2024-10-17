@@ -23,7 +23,7 @@ export const createGameSlice = (set) => ({
   setDrawerId: (id) => set({ drawerId: id }),
   setDrawerName: (name) => set({ drawerName: name }),
   setRound: (value) => set({ round: value }),
-  setMaxRounds: (value) => set({ maxRound: value }),
+  setMaxRounds: (value) => set({ maxRounds: value }),
   setDrawTime: (value) => set({ drawTime: value }),
   setWordLength: (value) => set({ wordLength: value }),
   setCurrentWord: (value) => set({ currentWord: value }),

@@ -26,17 +26,24 @@ function App() {
     decreaseChooseTime,
     setChooseTime,
     drawTime,
+    setDrawTime,
     setDrawTimeLeft,
     decreaseDrawTimeLeft,
+    setMaxRounds,
   } = useStore();
 
   useEffect(() => {
     socket.on("connect", () => setMySocketId(socket.id));
-    socket.on("join-successful", ({ roomCode, ownerId }) => {
-      setMyRoomId(roomCode);
-      setOwnerId(ownerId);
-      console.log("join success");
-    });
+    socket.on(
+      "join-successful",
+      ({ roomCode, ownerId, maxRound, drawTime }) => {
+        setMyRoomId(roomCode);
+        setOwnerId(ownerId);
+        setDrawTime(drawTime);
+        setMaxRounds(maxRound);
+        console.log("join success");
+      }
+    );
     socket.on("connect_error", () => toast.error("Connection error"));
     socket.on("error", (error) => toast.error(error));
     socket.on("updated-players", (players) => setPlayers(players));
@@ -52,6 +59,7 @@ function App() {
       setDrawerId(data.drawerId);
       setDrawerName(data.drawerName);
       setCurrentWord("");
+      setWordOptions([]);
       setGameState("choosing");
 
       const intervalId = setInterval(() => {

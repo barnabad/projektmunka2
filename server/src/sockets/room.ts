@@ -53,7 +53,13 @@ function createRoom(
       )
     );
     // Kliens értesítése
-    joinSuccessful(socket, socket.id, roomId);
+    joinSuccessful(
+      socket,
+      socket.id,
+      roomId,
+      ROOMS.get(roomId)!.drawTime,
+      ROOMS.get(roomId)!.maxRound
+    );
     updatePlayers(io, roomId, ROOMS.get(roomId)!.playersList);
     sendConnectionMsg(io, roomId, name, true);
     // Hiba kiiratása console-ra
@@ -84,7 +90,13 @@ function joinRoom(
     try {
       socket.join(roomId);
       room.addPlayer(new Player(socket.id, name));
-      joinSuccessful(socket, room.ownerId, roomId);
+      joinSuccessful(
+        socket,
+        room.ownerId,
+        roomId,
+        room.drawTime,
+        room.maxRound
+      );
       updatePlayers(io, roomId, room.playersList);
       sendConnectionMsg(io, roomId, name, true);
       // JohnDoe123 has joined room
@@ -125,8 +137,19 @@ export function leaveRoom(io: Server, socket: Socket, ROOMS: RoomContainer) {
 }
 
 // Játékos értesítése
-function joinSuccessful(socket: Socket, ownerId: string, roomCode: string) {
-  socket.emit("join-successful", { ownerId: ownerId, roomCode: roomCode });
+function joinSuccessful(
+  socket: Socket,
+  ownerId: string,
+  roomCode: string,
+  drawTime: number,
+  maxRound: number
+) {
+  socket.emit("join-successful", {
+    ownerId: ownerId,
+    roomCode: roomCode,
+    maxRound: maxRound,
+    drawTime: drawTime,
+  });
 }
 
 // Szobában levők értesítése
