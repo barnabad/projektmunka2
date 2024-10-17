@@ -160,7 +160,7 @@ export const hungarianWords = [
   "Szuezi-csatorna",
   "Skócia",
   "USA",
-  "NewYork",
+  "New York",
   "Thaiföld",
   "Szingapúr",
   "Izland",

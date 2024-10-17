@@ -110,7 +110,7 @@ function gameplayLoop(io: Server, room: Room, roomId: string) {
   // Kör időzítő indítása, végén felfedi a szót és indul az újabb menet
   const roundTimer = setTimeout(() => {
     io.to(roomId).emit("reveal-word", room.currentWord);
-    clearInterval(Gameplayloop);
+    clearInterval(GameplayloopId);
     let nextPlayer = room!.drawersList.pop();
     room.playersList.forEach((player) => {
       player.guessed = false;
@@ -140,8 +140,30 @@ function gameplayLoop(io: Server, room: Room, roomId: string) {
     }
   }, room.drawTime * 1000);
 
-  const Gameplayloop = setInterval(() => {
+  // Karakterek felfedése
+  let revealedPos: number[] = [];
+  const felfedDB = Math.ceil(room.currentWord.length / 4);
+  console.log("felfed db: ", felfedDB);
+
+  const GameplayloopId = setInterval(() => {
     console.log(idozito--);
+
+    if (revealedPos.length < felfedDB && idozito % 7 === 0) {
+      let letter = "";
+      let position = 0;
+      while (true) {
+        position = Math.floor(Math.random() * room.currentWord.length);
+        letter = room.currentWord[position];
+        if (!revealedPos.includes(position)) {
+          revealedPos.push(position);
+          break;
+        }
+      }
+      io.to(roomId).emit("reveal-letter", {
+        letter: letter,
+        position: position,
+      });
+    }
   }, 1000);
 }
 

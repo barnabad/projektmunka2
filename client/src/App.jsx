@@ -30,6 +30,8 @@ function App() {
     setDrawTimeLeft,
     decreaseDrawTimeLeft,
     setMaxRounds,
+    addHint,
+    resetHint,
   } = useStore();
 
   useEffect(() => {
@@ -59,6 +61,7 @@ function App() {
       setDrawerId(data.drawerId);
       setDrawerName(data.drawerName);
       setCurrentWord("");
+      resetHint();
       setWordOptions([]);
       setGameState("choosing");
 
@@ -98,6 +101,10 @@ function App() {
     socket.on("send-solution", (solution) => {
       setCurrentWord(solution);
     });
+    
+    socket.on("reveal-letter", (data) =>{
+      addHint(data);
+    });
 
     socket.on("game-end", () => {
       setGameState("postGame");
@@ -107,6 +114,7 @@ function App() {
         setBigTime(null);
       }
     });
+
 
     return () => {
       socket.off("connect");

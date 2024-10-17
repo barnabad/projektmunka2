@@ -12,6 +12,7 @@ export const createGameSlice = (set) => ({
   currentWord: "",
   chooseTime: 15,
   drawTimeLeft: 0,
+  hints: [],
 
   setPlayers: (players) => set({ players: players }),
   setGameState: (state) => set({ gameState: state }),
@@ -33,4 +34,6 @@ export const createGameSlice = (set) => ({
     set((state) => ({ chooseTime: state.chooseTime - 1 })),
   decreaseDrawTimeLeft: () =>
     set((state) => ({ drawTimeLeft: state.drawTimeLeft - 1 })),
+  addHint: (value) => set((state) => ({ hints: [...state.hints, value] })),
+  resetHint: () => set({ hints: [] }),
 });
