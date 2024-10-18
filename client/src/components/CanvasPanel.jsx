@@ -9,6 +9,8 @@ import { useStore } from "../store/store";
 import { useEffect, useRef, useState } from "react";
 
 function CanvasPanel() {
+  const [isDrawing, setIsDrawing] = useState(false);
+
   const {
     gameState,
     setCanvasWidth,
@@ -21,7 +23,6 @@ function CanvasPanel() {
     drawerId,
   } = useStore();
   const canvasRef = useRef(null);
-  const [isDrawing, setIsDrawing] = useState(false);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -76,6 +77,7 @@ function CanvasPanel() {
   };
 
   const draw = (e) => {
+    if (mySocketId !== drawerId) return;
     if (!isDrawing) return;
 
     // Get the canvas's bounding rectangle

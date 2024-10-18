@@ -33,15 +33,17 @@ const colorNames = [
   ],
 ];
 
-function ColorBlock({ color, setColor, setLastColor }) {
+function ColorBlock({ color, setColor, setLastColor, isDrawTool }) {
   return (
     <div
       className="w-[25px]"
       style={{ backgroundColor: color }}
       data-color={color}
       onClick={(e) => {
-        setColor(e.target.dataset.color);
-        setLastColor(e.target.dataset.color);
+        if (isDrawTool) {
+          setColor(e.target.dataset.color);
+          setLastColor(e.target.dataset.color);
+        }
       }}
     ></div>
   );
@@ -51,7 +53,6 @@ function ThicknessSlider() {
   const { thickness, setThickness } = useStore();
 
   const handleThicknessChange = (value) => {
-    console.log("thickness changed", value);
     setThickness(value);
   };
 
@@ -89,7 +90,7 @@ function BottomPanel() {
     thickness,
     mySocketId,
     drawerId,
-    gameState
+    gameState,
   } = useStore();
 
   const [isDrawTool, setIsDrawTool] = useState(true);
@@ -104,7 +105,7 @@ function BottomPanel() {
       <div className="w-[200px] p-3 text-xl flex justify-center items-center font-semibold">
         {`Round ${round} of ${maxRounds}`}
       </div>
-      {(mySocketId === drawerId && gameState === "playing") && (
+      {mySocketId === drawerId && gameState === "playing" && (
         <div className="flex-grow p-3 gap-3 flex justify-center items-center">
           <div
             className="w-[54px] h-[54px] rounded-lg border-2 border-zinc-600"
@@ -116,6 +117,7 @@ function BottomPanel() {
                 <ColorBlock
                   key={item}
                   color={item}
+                  isDrawTool={isDrawTool}
                   setColor={setColor}
                   setLastColor={setLastColor}
                 />
@@ -126,6 +128,7 @@ function BottomPanel() {
                 <ColorBlock
                   key={item}
                   color={item}
+                  isDrawTool={isDrawTool}
                   setColor={setColor}
                   setLastColor={setLastColor}
                 />

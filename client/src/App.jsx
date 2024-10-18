@@ -64,7 +64,7 @@ function App() {
       setDrawerId(data.drawerId);
       setDrawerName(data.drawerName);
       setCurrentWord("");
-      ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+      if (ctx) ctx.clearRect(0, 0, canvasWidth, canvasHeight);
       resetHint();
       setWordOptions([]);
       setGameState("choosing");
