@@ -32,7 +32,7 @@ export function ChooseWordContent() {
     drawerId,
     drawerName,
     setCurrentWord,
-    chooseTime
+    chooseTime,
   } = useStore();
 
   const handleClick = (word) => {

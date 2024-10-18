@@ -33,6 +33,6 @@ body {
   display: flex;
 }
 
-canvas {
+/* canvas {
   cursor: url("circle.svg"), auto;
-}
+} */
