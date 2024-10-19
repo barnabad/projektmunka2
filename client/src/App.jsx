@@ -35,6 +35,8 @@ function App() {
     ctx,
     canvasHeight,
     canvasWidth,
+    color,
+    thickness,
   } = useStore();
 
   useEffect(() => {
@@ -64,7 +66,12 @@ function App() {
       setDrawerId(data.drawerId);
       setDrawerName(data.drawerName);
       setCurrentWord("");
-      if (ctx) ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+      if (ctx) {
+        ctx.strokeStyle = color;
+        ctx.lineWidth = thickness;
+        ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+        ctx.lineJoin = "round";
+      }
       resetHint();
       setWordOptions([]);
       setGameState("choosing");
@@ -119,6 +126,39 @@ function App() {
       }
     });
 
+    let lastX = null;
+    let lastY = null;
+
+    // Listen for draw events from the server
+    socket.on("drawing-data", ({ x, y, stroke, color }) => {
+      ctx.strokeStyle = color;
+      ctx.lineWidth = stroke;
+
+      // If it's the first point in a stroke, move to that position
+      if (lastX === null || lastY === null) {
+        ctx.beginPath();
+        ctx.moveTo(x, y);
+      } else {
+        // Otherwise, draw a line from the last position to the current position
+        ctx.lineTo(x, y);
+        ctx.stroke();
+      }
+
+      // Update last position
+      lastX = x;
+      lastY = y;
+    });
+
+    // Reset the last position when the user lifts the pen
+    socket.on("draw-end", () => {
+      lastX = null;
+      lastY = null;
+    });
+
+    socket.on("canvas-cleared", () => {
+      ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+    });
+
     return () => {
       socket.off("connect");
       socket.off("connect_error");
@@ -133,6 +173,9 @@ function App() {
       socket.off("update-word-length");
       socket.off("send-solution");
       socket.off("game-end");
+      socket.off("drawing-data");
+      socket.off("draw-end");
+      socket.off("canvas-cleared");
 
       if (chooseTimeInterval) {
         clearInterval(chooseTimeInterval);

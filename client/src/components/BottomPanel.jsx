@@ -3,6 +3,7 @@ import { useStore } from "../store/store";
 import * as Slider from "@radix-ui/react-slider";
 import * as Popover from "@radix-ui/react-popover";
 import { useState } from "react";
+import { socket } from "../utils/socket";
 
 const colorNames = [
   [
@@ -91,6 +92,7 @@ function BottomPanel() {
     mySocketId,
     drawerId,
     gameState,
+    myRoomId
   } = useStore();
 
   const [isDrawTool, setIsDrawTool] = useState(true);
@@ -98,6 +100,7 @@ function BottomPanel() {
 
   const clearCanvas = () => {
     ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+    socket.emit("canvas-cleared", myRoomId);
   };
 
   return (

@@ -7,6 +7,7 @@ import {
 } from "./CanvasOverlay";
 import { useStore } from "../store/store";
 import { useEffect, useRef, useState } from "react";
+import { socket } from "../utils/socket";
 
 function CanvasPanel() {
   const [isDrawing, setIsDrawing] = useState(false);
@@ -21,6 +22,7 @@ function CanvasPanel() {
     thickness,
     mySocketId,
     drawerId,
+    myRoomId,
   } = useStore();
   const canvasRef = useRef(null);
 
@@ -73,6 +75,7 @@ function CanvasPanel() {
     if (mySocketId === drawerId) {
       setIsDrawing(false);
       ctx.beginPath();
+      socket.emit("draw-end", myRoomId);
     }
   };
 
@@ -80,17 +83,24 @@ function CanvasPanel() {
     if (mySocketId !== drawerId) return;
     if (!isDrawing) return;
 
-    // Get the canvas's bounding rectangle
     const rect = canvasRef.current.getBoundingClientRect();
 
-    // Calculate the mouse position relative to the canvas
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
 
-    ctx.lineTo(x, y); // Draw line to the relative position
+    ctx.lineTo(x, y);
     ctx.stroke();
     ctx.beginPath();
-    ctx.moveTo(x, y); // Start a new path from the relative position
+    ctx.moveTo(x, y);
+
+    // Log pixel data
+    const data = {
+      x: x,
+      y: y,
+      stroke: thickness[0],
+      color: color,
+    };
+    socket.emit("new-canvas-data", { roomId: myRoomId, data });
   };
 
   return (

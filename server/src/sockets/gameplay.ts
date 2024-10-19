@@ -19,7 +19,21 @@ export function gamePlaySocket(
     if (!room!.currentWord) room!.currentWord = word.toLocaleLowerCase();
   });
 
-  socket.on("draw", (data) => listenOnDraw(socket));
+  socket.on("new-canvas-data", ({ roomId, data }) => {
+    // Ez csak elküldi a pixel adatokat a többi játékosnak
+    // TODO: eltárolni minden szobanak a pixel adatait, hogy a késobb csatlakozot
+    // jatekosnak is ki lehessen rajzoni a teljes cuccot
+    io.to(roomId).except(socket.id).emit("drawing-data", data);
+    //console.log(data);
+  });
+
+  socket.on("draw-end", (roomId) => {
+    io.to(roomId).except(socket.id).emit("draw-end");
+  });
+
+  socket.on("canvas-cleared", (roomId) => {
+    io.to(roomId).except(socket.id).emit("canvas-cleared");
+  });
 }
 
 // Functions
@@ -209,14 +223,4 @@ function chooseWord(
 
     return words;
   }
-}
-
-function listenOnDraw(socket: Socket) {
-  // TODO!
-  // Rajz feldolgozása...
-  // const user = getUser(socket.id);
-  // console.log(user);
-  // TODO!
-  // Rajz kiküldése
-  // socket.broadcast.to(user.room).emit('draw', data);
 }
