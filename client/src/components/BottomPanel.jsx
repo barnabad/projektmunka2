@@ -1,151 +1,195 @@
-import { Eraser, PaintBucket, Pencil, Trash2 } from "lucide-react";
+import { CircleDot, Eraser, PaintBucket, Pencil, Trash2 } from "lucide-react";
+import { useStore } from "../store/store";
+import * as Slider from "@radix-ui/react-slider";
+import * as Popover from "@radix-ui/react-popover";
 import { useState } from "react";
+import { socket } from "../utils/socket";
 
-function BottomPanel({ allRounds, currentRound }) {
-  const [selectedColor, setSelectedColor] = useState("black");
+const colorNames = [
+  [
+    "#ffffff", // white
+    "#9ca3af", // gray-400
+    "#f87171", // red-400
+    "#fb923c", // orange-400
+    "#facc15", // yellow-400
+    "#4ade80", // green-400
+    "#38bdf8", // sky-400
+    "#60a5fa", // blue-400
+    "#a78bfa", // purple-400
+    "#f472b6", // pink-400
+    "#c2410c", // orange-700
+  ],
+  [
+    "#000000", // black
+    "#374151", // gray-700
+    "#ff0000",
+    "#f97316", // orange-500
+    "#ca8a04", // yellow-600
+    "#008000", // green-950
+    "#0c4a6e", // sky-900
+    "#1e3a8a", // blue-950
+    "#581c87", // purple-950
+    "#831843", // pink-900
+    "#7c2d12", // orange-950
+  ],
+];
+
+function ColorBlock({ color, setColor, setLastColor, isDrawTool }) {
+  return (
+    <div
+      className="w-[25px]"
+      style={{ backgroundColor: color }}
+      data-color={color}
+      onClick={(e) => {
+        if (isDrawTool) {
+          setColor(e.target.dataset.color);
+          setLastColor(e.target.dataset.color);
+        }
+      }}
+    ></div>
+  );
+}
+
+function ThicknessSlider() {
+  const { thickness, setThickness } = useStore();
+
+  const handleThicknessChange = (value) => {
+    setThickness(value);
+  };
+
+  return (
+    <form className="ml-5">
+      <Slider.Root
+        onValueChange={handleThicknessChange}
+        className="relative flex h-5 w-[200px] touch-none select-none items-center"
+        value={[thickness]}
+        min={5}
+        max={50}
+        step={1}
+      >
+        <Slider.Track className="relative h-[3px] grow rounded-full bg-zinc-500">
+          <Slider.Range className="absolute h-full rounded-full bg-white" />
+        </Slider.Track>
+        <Slider.Thumb
+          className="block size-4 rounded-[10px] bg-white focus:outline-none"
+          aria-label="Volume"
+        />
+      </Slider.Root>
+    </form>
+  );
+}
+
+function BottomPanel() {
+  const {
+    round,
+    maxRounds,
+    ctx,
+    canvasHeight,
+    canvasWidth,
+    color,
+    setColor,
+    thickness,
+    mySocketId,
+    drawerId,
+    gameState,
+    myRoomId
+  } = useStore();
+
+  const [isDrawTool, setIsDrawTool] = useState(true);
+  const [lastColor, setLastColor] = useState(color);
+
+  const clearCanvas = () => {
+    ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+    socket.emit("canvas-cleared", myRoomId);
+  };
 
   return (
     <div className="rounded-lg bg-zinc-700 flex gap-3">
       <div className="w-[200px] p-3 text-xl flex justify-center items-center font-semibold">
-        {`Round ${currentRound} of ${allRounds}`}
+        {`Round ${round} of ${maxRounds}`}
       </div>
-      <div className="flex-grow p-3 gap-3 flex justify-center items-center">
-        <div
-          className={`w-[54px] h-[54px] bg-${selectedColor} rounded-lg border-2 border-zinc-600`}
-        ></div>
-        <div className="border-2 border-zinc-600 rounded-lg overflow-hidden cursor-pointer">
-          <div className="h-[25px] flex">
-            <div
-              className="w-[25px] bg-white"
-              data-color="white"
-              onClick={(e) => setSelectedColor(e.target.dataset.color)}
-            ></div>
-            <div
-              className="w-[25px] bg-gray-400"
-              data-color="gray-400"
-              onClick={(e) => setSelectedColor(e.target.dataset.color)}
-            ></div>
-            <div
-              className="w-[25px] bg-red-400"
-              data-color="red-400"
-              onClick={(e) => setSelectedColor(e.target.dataset.color)}
-            ></div>
-            <div
-              className="w-[25px] bg-orange-400"
-              data-color="orange-400"
-              onClick={(e) => setSelectedColor(e.target.dataset.color)}
-            ></div>
-            <div
-              className="w-[25px] bg-yellow-400"
-              data-color="yellow-400"
-              onClick={(e) => setSelectedColor(e.target.dataset.color)}
-            ></div>
-            <div
-              className="w-[25px] bg-green-400"
-              data-color="green-400"
-              onClick={(e) => setSelectedColor(e.target.dataset.color)}
-            ></div>
-            <div
-              className="w-[25px] bg-sky-400"
-              data-color="sky-400"
-              onClick={(e) => setSelectedColor(e.target.dataset.color)}
-            ></div>
-            <div
-              className="w-[25px] bg-blue-400"
-              data-color="blue-400"
-              onClick={(e) => setSelectedColor(e.target.dataset.color)}
-            ></div>
-            <div
-              className="w-[25px] bg-purple-400"
-              data-color="purple-400"
-              onClick={(e) => setSelectedColor(e.target.dataset.color)}
-            ></div>
-            <div
-              className="w-[25px] bg-pink-400"
-              data-color="pink-400"
-              onClick={(e) => setSelectedColor(e.target.dataset.color)}
-            ></div>
-            <div
-              className="w-[25px] bg-orange-700"
-              data-color="orange-700"
-              onClick={(e) => setSelectedColor(e.target.dataset.color)}
-            ></div>
+      {mySocketId === drawerId && gameState === "playing" && (
+        <div className="flex-grow p-3 gap-3 flex justify-center items-center">
+          <div
+            className="w-[54px] h-[54px] rounded-lg border-2 border-zinc-600"
+            style={{ backgroundColor: !isDrawTool ? lastColor : color }}
+          ></div>
+          <div className="border-2 border-zinc-600 rounded-lg overflow-hidden cursor-pointer">
+            <div className="h-[25px] flex">
+              {colorNames[0].map((item) => (
+                <ColorBlock
+                  key={item}
+                  color={item}
+                  isDrawTool={isDrawTool}
+                  setColor={setColor}
+                  setLastColor={setLastColor}
+                />
+              ))}
+            </div>
+            <div className="h-[25px] flex">
+              {colorNames[1].map((item) => (
+                <ColorBlock
+                  key={item}
+                  color={item}
+                  isDrawTool={isDrawTool}
+                  setColor={setColor}
+                  setLastColor={setLastColor}
+                />
+              ))}
+            </div>
           </div>
-          <div className="h-[25px] flex">
-            <div
-              className="w-[25px] bg-black"
-              data-color="black"
-              onClick={(e) => setSelectedColor(e.target.dataset.color)}
-            ></div>
-            <div
-              className="w-[25px] bg-gray-700"
-              data-color="gray-700"
-              onClick={(e) => setSelectedColor(e.target.dataset.color)}
-            ></div>
-            <div
-              className="w-[25px] bg-red-700"
-              data-color="red-700"
-              onClick={(e) => setSelectedColor(e.target.dataset.color)}
-            ></div>
-            <div
-              className="w-[25px] bg-orange-500"
-              data-color="orange-500"
-              onClick={(e) => setSelectedColor(e.target.dataset.color)}
-            ></div>
-            <div
-              className="w-[25px] bg-yellow-600"
-              data-color="yellow-600"
-              onClick={(e) => setSelectedColor(e.target.dataset.color)}
-            ></div>
-            <div
-              className="w-[25px] bg-green-950"
-              data-color="green-950"
-              onClick={(e) => setSelectedColor(e.target.dataset.color)}
-            ></div>
-            <div
-              className="w-[25px] bg-sky-900"
-              data-color="sky-900"
-              onClick={(e) => setSelectedColor(e.target.dataset.color)}
-            ></div>
-            <div
-              className="w-[25px] bg-blue-950"
-              data-color="blue-950"
-              onClick={(e) => setSelectedColor(e.target.dataset.color)}
-            ></div>
-            <div
-              className="w-[25px] bg-purple-950"
-              data-color="purple-950"
-              onClick={(e) => setSelectedColor(e.target.dataset.color)}
-            ></div>
-            <div
-              className="w-[25px] bg-pink-900"
-              data-color="pink-900"
-              onClick={(e) => setSelectedColor(e.target.dataset.color)}
-            ></div>
-            <div
-              className="w-[25px] bg-orange-950"
-              data-color="orange-950"
-              onClick={(e) => setSelectedColor(e.target.dataset.color)}
-            ></div>
-          </div>
-        </div>
 
-        <div className="flex gap-1">
-          <div className="shadow-lg border-2 rounded-lg border-zinc-600 p-2 cursor-pointer hover:border-zinc-500">
-            <Pencil size={34} />
-          </div>
-          <div className="shadow-lg border-2 rounded-lg border-zinc-600 p-2 cursor-pointer hover:border-zinc-500">
+          <div className="flex gap-1">
+            <div
+              onClick={() => {
+                setIsDrawTool(true);
+                setColor(lastColor);
+              }}
+              className={`shadow-lg border-2 ${
+                isDrawTool && "bg-zinc-500"
+              } rounded-lg border-zinc-600 p-2 cursor-pointer hover:border-zinc-500`}
+            >
+              <Pencil size={34} />
+            </div>
+            {/* <div className="shadow-lg border-2 rounded-lg border-zinc-600 p-2 cursor-pointer hover:border-zinc-500">
             <PaintBucket size={34} />
-          </div>
-          <div className="shadow-lg border-2 rounded-lg border-zinc-600 p-2 cursor-pointer hover:border-zinc-500">
-            <Eraser size={34} />
-          </div>
-          <div className="shadow-lg border-2 rounded-lg hover:border-zinc-500 border-zinc-600 p-2 cursor-pointer">
-            <Trash2 size={34} />
+          </div> */}
+            <div
+              onClick={() => {
+                setIsDrawTool(false);
+                setColor("#FFFFFF");
+              }}
+              className={`shadow-lg border-2 ${
+                !isDrawTool && "bg-zinc-500"
+              } rounded-lg border-zinc-600 p-2 cursor-pointer hover:border-zinc-500`}
+            >
+              <Eraser size={34} />
+            </div>
+
+            <Popover.Root>
+              <Popover.Trigger>
+                <div className="shadow-lg border-2 rounded-lg border-zinc-600 p-2 cursor-pointer hover:border-zinc-500">
+                  <CircleDot size={34} />
+                </div>
+              </Popover.Trigger>
+              <Popover.Content sideOffset={8}>
+                <div className="p-2 bg-zinc-700 rounded-md border-2 border-zinc-500 flex gap-2 items-center">
+                  <ThicknessSlider />
+                  <span className="w-[40px]">{thickness}px</span>
+                </div>
+              </Popover.Content>
+            </Popover.Root>
+
+            <div
+              onClick={clearCanvas}
+              className="shadow-lg border-2 rounded-lg hover:border-zinc-500 border-zinc-600 p-2 cursor-pointer"
+            >
+              <Trash2 size={34} />
+            </div>
           </div>
         </div>
-      </div>
-      <div className="w-[275px] p-3 flex items-center justify-center flex-col gap-2">
+      )}
+      <div className="ml-auto w-[275px] p-3 flex items-center justify-center flex-col gap-2">
         <div>[ Verzio X - 2024.XX.XX ]</div>
         <div>Projektmunka</div>
       </div>
