@@ -100,7 +100,8 @@ function CanvasPanel() {
       stroke: thickness[0],
       color: color,
     };
-    socket.emit("new-canvas-data", { roomId: myRoomId, data });
+    if (gameState === "playing")
+      socket.emit("new-canvas-data", { roomId: myRoomId, data });
   };
 
   return (

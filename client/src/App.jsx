@@ -79,24 +79,24 @@ function App() {
     });
     socket.on("choose-word", (words) => setWordOptions(words));
     socket.on("update-drawer", (data) => {
+      if (ctx) {
+        ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+        ctx.beginPath();
+        ctx.strokeStyle = color;
+        ctx.lineWidth = thickness;
+        ctx.lineJoin = "round";
+      }
+
+      lastX = null;
+      lastY = null;
+
       setDrawerId(data.drawerId);
       setDrawerName(data.drawerName);
       setIsDrawing(false);
       setGameState("choosing");
       setCurrentWord("");
-      if (ctx) {
-        ctx.strokeStyle = color;
-        ctx.lineWidth = thickness;
-        ctx.clearRect(0, 0, canvasWidth, canvasHeight);
-        ctx.lineJoin = "round";
-      }
       resetHint();
       setWordOptions([]);
-      // ?
-      lastX = null;
-      lastY = null;
-
-      ctx.clearRect(0, 0, canvasWidth, canvasHeight);
 
       const intervalId = setInterval(() => {
         decreaseChooseTime();
