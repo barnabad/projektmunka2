@@ -100,16 +100,26 @@ export function RoundEndContent() {
 }
 
 export function PostGameContent() {
+  const { mySocketId, ownerId, myRoomId } = useStore();
+
+  const playAgain = () => {
+    socket.emit("play-again", myRoomId);
+  };
+
   return (
     <div className="flex flex-col gap-5 text-lg text-center">
       <div>
-        <div>#1 Barni</div>
-        <div>#2 Alex</div>
-        <div>#2 Peti</div>
+        {/*TODO: Eredmenyek ide*/}
+        Results...
       </div>
-      <button className="p-2 shadow-lg border-zinc-600 bg-zinc-700 border-2 rounded-lg hover:border-zinc-500">
-        Play Again
-      </button>
+      {mySocketId === ownerId && (
+        <button
+          onClick={playAgain}
+          className="p-2 shadow-lg border-zinc-600 bg-zinc-700 border-2 rounded-lg hover:border-zinc-500"
+        >
+          Play Again
+        </button>
+      )}
     </div>
   );
 }

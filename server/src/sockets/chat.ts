@@ -14,26 +14,23 @@ export function chatSocket(io: Server, socket: Socket, ROOMS: RoomContainer) {
       return;
     }
     // Aki eltalálta nem írhat
-    if(player!.guessed){
+    if (player!.guessed) {
       console.log("te mar megnyerted");
       return;
     }
     // Helyes eredémny
     if (room!.currentWord === message.toLocaleLowerCase()) {
-      var drawer= room!.currentDrawer;
       player!.guessed = true;
       player!.score += 100;
-   
+
       //const drawer=room.findplayer(room.currentdrawer)
- 
+
       const drawerPlayer = room!.playersList.find(
         (p) => p.playerId === room!.currentDrawer
       );
       if (drawerPlayer) {
         drawerPlayer.score += 50; // Award points to the drawer (adjust as needed)
       }
-
-
 
       io.to(roomId).emit("new-message", {
         name: "Server Info",

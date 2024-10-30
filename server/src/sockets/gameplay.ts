@@ -34,6 +34,11 @@ export function gamePlaySocket(
   socket.on("canvas-cleared", (roomId) => {
     io.to(roomId).except(socket.id).emit("canvas-cleared");
   });
+
+  socket.on("play-again", (roomId) => {
+    console.log("Game restarted is room: ", roomId);
+    startGame(io, socket, roomId, ROOMS);
+  });
 }
 
 // Functions

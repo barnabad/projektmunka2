@@ -5,6 +5,7 @@ export const createCanvasSlice = (set) => ({
   thickness: [8],
   ctx: null,
   canvasData: [],
+  isDrawing: false,
 
   setCanvasWidth: (value) => set({ canvasWidth: value }),
   setCanvasHeight: (value) => set({ canvasHeight: value }),
@@ -13,4 +14,5 @@ export const createCanvasSlice = (set) => ({
   setCtx: (value) => set({ ctx: value }),
   addCanvasData: (data) =>
     set((state) => ({ canvasData: [...state.canvasData, data] })),
+  setIsDrawing: (value) => set({ isDrawing: value }),
 });

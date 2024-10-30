@@ -37,10 +37,25 @@ function App() {
     canvasWidth,
     color,
     thickness,
+    setIsDrawing,
+    gameState,
   } = useStore();
 
   useEffect(() => {
-    socket.on("connect", () => setMySocketId(socket.id));
+    socket.connect();
+
+    socket.on("connect", () => {
+      console.log("Connected to socket server");
+      setMySocketId(socket.id);
+    });
+
+    return () => {
+      socket.disconnect();
+      socket.off("connect");
+    };
+  }, [setMySocketId]);
+
+  useEffect(() => {
     socket.on(
       "join-successful",
       ({ roomCode, ownerId, maxRound, drawTime }) => {
@@ -49,6 +64,7 @@ function App() {
         setDrawTime(drawTime);
         setMaxRounds(maxRound);
         console.log("join success");
+        // hang ide
       }
     );
     socket.on("connect_error", () => toast.error("Connection error"));
@@ -65,6 +81,8 @@ function App() {
     socket.on("update-drawer", (data) => {
       setDrawerId(data.drawerId);
       setDrawerName(data.drawerName);
+      setIsDrawing(false);
+      setGameState("choosing");
       setCurrentWord("");
       if (ctx) {
         ctx.strokeStyle = color;
@@ -74,7 +92,11 @@ function App() {
       }
       resetHint();
       setWordOptions([]);
-      setGameState("choosing");
+      // ?
+      lastX = null;
+      lastY = null;
+
+      ctx.clearRect(0, 0, canvasWidth, canvasHeight);
 
       const intervalId = setInterval(() => {
         decreaseChooseTime();
@@ -131,22 +153,24 @@ function App() {
 
     // Listen for draw events from the server
     socket.on("drawing-data", ({ x, y, stroke, color }) => {
-      ctx.strokeStyle = color;
-      ctx.lineWidth = stroke;
+      if (gameState === "playing") {
+        ctx.strokeStyle = color;
+        ctx.lineWidth = stroke;
 
-      // If it's the first point in a stroke, move to that position
-      if (lastX === null || lastY === null) {
-        ctx.beginPath();
-        ctx.moveTo(x, y);
-      } else {
-        // Otherwise, draw a line from the last position to the current position
-        ctx.lineTo(x, y);
-        ctx.stroke();
+        // If it's the first point in a stroke, move to that position
+        if (lastX === null || lastY === null) {
+          ctx.beginPath();
+          ctx.moveTo(x, y);
+        } else {
+          // Otherwise, draw a line from the last position to the current position
+          ctx.lineTo(x, y);
+          ctx.stroke();
+        }
+
+        // Update last position
+        lastX = x;
+        lastY = y;
       }
-
-      // Update last position
-      lastX = x;
-      lastY = y;
     });
 
     // Reset the last position when the user lifts the pen
@@ -160,7 +184,6 @@ function App() {
     });
 
     return () => {
-      socket.off("connect");
       socket.off("connect_error");
       socket.off("error");
       socket.off("join-successful");

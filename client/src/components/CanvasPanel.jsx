@@ -10,8 +10,8 @@ import { useEffect, useRef, useState } from "react";
 import { socket } from "../utils/socket";
 
 function CanvasPanel() {
-  const [isDrawing, setIsDrawing] = useState(false);
-
+  //const [isDrawing, setIsDrawing] = useState(false);
+  const { isDrawing, setIsDrawing } = useStore();
   const {
     gameState,
     setCanvasWidth,
