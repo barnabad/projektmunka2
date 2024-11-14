@@ -1,4 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
+import { useStore } from "../store/store";
+
+// AvatarDisplay component remains the same
 function AvatarDisplay({ avatarUrl }) {
   return (
     <div className="p-4 rounded-full shadow-lg">
@@ -11,68 +14,62 @@ function AvatarDisplay({ avatarUrl }) {
     </div>
   );
 }
+
 function AvatarBox() {
+  const { avatarUrl, setAvatarUrl } = useStore();  // Access avatarUrl from the global store
   const [seed, setSeed] = useState(generateRandomSeed());
   const [skinNum, setSkinNum] = useState(0);
   const [hatNum, setHatNum] = useState(0);
   const [eyeNum, setEyeNum] = useState(0);
   const [changed, setChanged] = useState(false);
+
   function generateRandomSeed() {
     return Math.random().toString(36).substring(2, 15);
   }
 
   const skinColor = [
-    "614335",
-    "ae5d29",
-    "d08b5b",
-    "e8d5a7",
-    "ffdbb4",
-    "10ff30",
+    "614335", "ae5d29", "d08b5b", "e8d5a7", "ffdbb4", "10ff30"
   ];
   const hatStyle = [
-    "hijab",
-    "frizzle",
-    "winterHat02",
-    "turban",
-    "shavedSides",
-    "fro",
+    "hijab", "frizzle", "winterHat02", "turban", "shavedSides", "fro"
   ];
   const eyeStyle = ["closed", "winkWacky", "side", "eyeRoll", "hearts", "cry"];
 
-  const getAvatarUrl = useCallback(
-    () =>
-      `https://api.dicebear.com/9.x/avataaars/svg?seed=${seed}&backgroundType=gradientLinear,gradientLinear${
-        changed
-          ? `&skinColor=${skinColor[skinNum]}&top=${hatStyle[hatNum]}&eyes=${eyeStyle[eyeNum]}`
-          : ""
-      }`,
-    [eyeNum, eyeStyle, hatNum, hatStyle, seed, skinColor, skinNum]
-  );
+  // Generate avatar URL and store it in global state
+  const getAvatarUrl = useCallback(() => {
+    let url = `https://api.dicebear.com/9.x/avataaars/svg?seed=${seed}&backgroundType=gradientLinear${
+      changed
+        ? `&skinColor=${skinColor[skinNum]}&top=${hatStyle[hatNum]}&eyes=${eyeStyle[eyeNum]}`
+        : ""
+    }`;
+    setAvatarUrl(url); 
+    return url;
+  }, [seed, skinColor, skinNum, hatStyle, hatNum, eyeStyle, eyeNum, changed, setAvatarUrl]);
+  
 
-  useEffect(() => {
-    getAvatarUrl();
-  }, [getAvatarUrl, skinNum, hatNum, eyeNum]);
+  useEffect(() => {    
+    getAvatarUrl();  // Update avatar on component mount and whenever dependencies change
+  }, [seed, skinNum, hatNum, eyeNum, changed]);
 
-  //Jobbra nyil
+  // Randomize avatar
   const randomAvatar = () => {
     setSeed(generateRandomSeed());
+    setChanged(false);
   };
 
+  // Cycle through options for skin, hat, and eye
   const cycle = (list, direction, state, set) => {
     if (direction) {
       if (state < list.length - 1) {
         set(state + 1);
       } else set(0);
-    }
-    if (!direction) {
+    } else {
       if (state === 0) {
         set(list.length - 1);
       } else set(state - 1);
     }
     setChanged(true);
   };
-
-  console.log(hatNum);
 
   return (
     <div
@@ -92,7 +89,7 @@ function AvatarBox() {
           </button>
         </div>
         <div>
-          <AvatarDisplay avatarUrl={getAvatarUrl()} />
+          <AvatarDisplay avatarUrl={avatarUrl} />
         </div>
         <div className="flex flex-col gap-2">
           <button onClick={() => cycle(hatStyle, 1, hatNum, setHatNum)}>
@@ -107,11 +104,8 @@ function AvatarBox() {
         </div>
       </div>
       <button
-        className="shadow-lg w-1/2 p-2 border-2 rounded-lg border-zinc-500 hover:border-zinc-400  "
-        onClick={() => {
-          randomAvatar();
-          setChanged(false);
-        }}
+        className="shadow-lg w-1/2 p-2 border-2 rounded-lg border-zinc-500 hover:border-zinc-400"
+        onClick={randomAvatar}
       >
         Random
       </button>

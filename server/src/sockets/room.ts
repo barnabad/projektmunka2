@@ -10,8 +10,8 @@ export function roomSocket(io: Server, socket: Socket, ROOMS: RoomContainer) {
     createRoom(io, socket, data, ROOMS)
   );
 
-  socket.on("join-room", ({ roomId, name }: { roomId: string; name: string }) =>
-    joinRoom(io, socket, ROOMS, roomId, name)
+  socket.on("join-room", ({ roomId, name, avatarUrl }: { roomId: string; name: string, avatarUrl: string }) =>
+    joinRoom(io, socket, ROOMS, roomId, name, avatarUrl)
   );
 
   socket.on("leave-room", () => leaveRoom(io, socket, ROOMS));
@@ -21,6 +21,7 @@ export function roomSocket(io: Server, socket: Socket, ROOMS: RoomContainer) {
 
 type CreateRoomType = {
   name: string;
+  avatarUrl: string;
   options: {
     maxRounds: number;
     maxPlayers: number;
@@ -32,7 +33,7 @@ type CreateRoomType = {
 function createRoom(
   io: Server,
   socket: Socket,
-  { name, options }: CreateRoomType,
+  { name, avatarUrl, options }: CreateRoomType,
   ROOMS: RoomContainer
 ) {
   // TODO: random szoba id létrehozása
@@ -49,7 +50,7 @@ function createRoom(
         options.maxRounds,
         options.drawTime,
         socket.id,
-        [new Player(socket.id, name)]
+        [new Player(socket.id, name, avatarUrl)]
       )
     );
     // Kliens értesítése
@@ -74,7 +75,8 @@ function joinRoom(
   socket: Socket,
   ROOMS: RoomContainer,
   roomId: string,
-  name: string
+  name: string,
+  avatarUrl: string
 ) {
   const room = ROOMS.get(roomId);
 
@@ -89,7 +91,7 @@ function joinRoom(
     // Szobába csatlakozás
     try {
       socket.join(roomId);
-      room.addPlayer(new Player(socket.id, name));
+      room.addPlayer(new Player(socket.id, name, avatarUrl));
       joinSuccessful(
         socket,
         room.ownerId,

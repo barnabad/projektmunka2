@@ -3,13 +3,13 @@ export class Player {
   name: string;
   score: number;
   guessed: boolean;
-  playerAvatar: string;
+  avatarUrl: string;
 
-  constructor(playerId: string, name: string) {
+  constructor(playerId: string, name: string, avatarUrl: string) {
     this.playerId = playerId;
     this.name = name;
     this.score = 0;
     this.guessed = false;
-    this.playerAvatar="";
+    this.avatarUrl = avatarUrl;
   }
 }
