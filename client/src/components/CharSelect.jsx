@@ -16,6 +16,7 @@ function AvatarBox() {
   const [skinNum, setSkinNum] = useState(0);
   const [hatNum, setHatNum] = useState(0);
   const [eyeNum, setEyeNum] = useState(0);
+  const [changed, setChanged] = useState(false);
   function generateRandomSeed() {
     return Math.random().toString(36).substring(2, 15);
   }
@@ -40,7 +41,11 @@ function AvatarBox() {
 
   const getAvatarUrl = useCallback(
     () =>
-      `https://api.dicebear.com/9.x/avataaars/svg?seed=${seed}&backgroundType=gradientLinear,gradientLinear&skinColor=${skinColor[skinNum]}&top=${hatStyle[hatNum]}&eyes=${eyeStyle[eyeNum]}`,
+      `https://api.dicebear.com/9.x/avataaars/svg?seed=${seed}&backgroundType=gradientLinear,gradientLinear${
+        changed
+          ? `&skinColor=${skinColor[skinNum]}&top=${hatStyle[hatNum]}&eyes=${eyeStyle[eyeNum]}`
+          : ""
+      }`,
     [eyeNum, eyeStyle, hatNum, hatStyle, seed, skinColor, skinNum]
   );
 
@@ -64,6 +69,7 @@ function AvatarBox() {
         set(list.length - 1);
       } else set(state - 1);
     }
+    setChanged(true);
   };
 
   console.log(hatNum);
@@ -102,7 +108,10 @@ function AvatarBox() {
       </div>
       <button
         className="shadow-lg w-1/2 p-2 border-2 rounded-lg border-zinc-500 hover:border-zinc-400  "
-        onClick={randomAvatar}
+        onClick={() => {
+          randomAvatar();
+          setChanged(false);
+        }}
       >
         Random
       </button>
