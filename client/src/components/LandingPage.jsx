@@ -2,9 +2,10 @@ import { useState } from "react";
 import { useStore } from "../store/store";
 import { socket } from "../utils/socket";
 import toast from "react-hot-toast";
+import AvatarBox from "./CharSelect";
 
 function CreateDropdown() {
-  const { name, drawTime, setDrawTime, maxRounds, setMaxRounds } = useStore();
+  const { name, avatarUrl, drawTime, setDrawTime, maxRounds, setMaxRounds } = useStore();
   const [maxPlayers, setMaxPlayers] = useState(2);
   const [language, setLanguage] = useState("hungarian");
 
@@ -12,6 +13,7 @@ function CreateDropdown() {
     if (name) {
       socket.emit("create-room", {
         name: name,
+        avatarUrl: avatarUrl,
         options: {
           maxRounds: maxRounds,
           maxPlayers: maxPlayers,
@@ -86,12 +88,12 @@ function CreateDropdown() {
 }
 
 function JoinDropdown() {
-  const { name } = useStore();
+  const { name, avatarUrl } = useStore();
   const [roomCode, setRoomCode] = useState("");
 
   const handleJoin = () => {
     if (name && roomCode) {
-      socket.emit("join-room", { roomId: roomCode, name: name });
+      socket.emit("join-room", { roomId: roomCode, name: name, avatarUrl: avatarUrl });
     } else toast.error("Name or Room Code missing");
   };
 
@@ -159,4 +161,19 @@ function LandingPage() {
   );
 }
 
-export default LandingPage;
+//LANDINGPAGE avatarral 
+function LandingPageWithAvatar() {
+
+  return (
+    <div className="flex gap-4 items-center">
+
+      <div className="flex-shrink-0" style={{ height: '290px', width: '250px' }}> 
+        <AvatarBox/>
+      </div>
+
+      <LandingPage />
+    </div>
+  );
+}
+
+export default LandingPageWithAvatar;

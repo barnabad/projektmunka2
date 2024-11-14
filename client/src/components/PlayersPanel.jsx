@@ -1,11 +1,12 @@
 import { Brush, Crown } from "lucide-react";
 import { useStore } from "../store/store";
 
-function PlayerCard({ place, name, score, isDrawing, playerId, isOwner }) {
+function PlayerCard({ place, name, avatarUrl, score, isDrawing, playerId, isOwner }) {
   const { mySocketId } = useStore();
 
   return (
-    <div className="p-2 rounded-lg bg-zinc-600 flex flex-col mr-1">
+    <div className="p-2 rounded-lg bg-zinc-600 flex flex-col mr-1 relative">
+        <img className="size-10" src={avatarUrl}></img>
       <div className="flex gap-3 font-semibold ">
         <div>#{place}</div>
         <div
@@ -46,6 +47,7 @@ function PlayersPanel() {
             playerId={item.playerId}
             place={index + 1}
             name={item.name}
+            avatarUrl={item.avatarUrl}
             score={item.score}
             isDrawing={drawerId === item.playerId}
             isOwner={item.playerId === ownerId}
