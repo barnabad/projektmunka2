@@ -7,7 +7,7 @@ import BottomPanel from "./BottomPanel";
 
 function GameWrapper() {
   return (
-    <main className="flex flex-col gap-3 max-w-[1300px]">
+    <main className="flex flex-col gap-3 max-w-[1375px]">
       <TopPanel />
       <div className="flex gap-3 justify-between h-[600px]">
         <PlayersPanel />

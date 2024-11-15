@@ -17,7 +17,7 @@ function TopPanel() {
 
   return (
     <div className="flex items-center gap-3 bg-zinc-700 rounded-lg">
-      <div className="flex gap-2 items-center text-lg w-[200px] p-3">
+      <div className="flex gap-2 items-center text-lg w-[275px] p-3">
         Time left:
         <span className="font-semibold">{drawTimeLeft}s</span>
       </div>

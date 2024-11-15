@@ -92,7 +92,7 @@ function BottomPanel() {
     mySocketId,
     drawerId,
     gameState,
-    myRoomId
+    myRoomId,
   } = useStore();
 
   const [isDrawTool, setIsDrawTool] = useState(true);
@@ -105,7 +105,7 @@ function BottomPanel() {
 
   return (
     <div className="rounded-lg bg-zinc-700 flex gap-3">
-      <div className="w-[200px] p-3 text-xl flex justify-center items-center font-semibold">
+      <div className="w-[275px] p-3 text-xl flex justify-center items-center font-semibold">
         {`Round ${round} of ${maxRounds}`}
       </div>
       {mySocketId === drawerId && gameState === "playing" && (
@@ -189,9 +189,9 @@ function BottomPanel() {
           </div>
         </div>
       )}
-      <div className="ml-auto w-[275px] p-3 flex items-center justify-center flex-col gap-2">
-        <div>[ Verzio X - 2024.XX.XX ]</div>
-        <div>Projektmunka</div>
+      <div className="ml-auto w-[275px] p-3 flex text-sm items-center justify-center flex-col gap-2">
+        <div>[ Projektmunka 1. - GKNB_INTM004 ]</div>
+        <div>[ Projektmunka 2. - GKNB_INTM005 ]</div>
       </div>
     </div>
   );

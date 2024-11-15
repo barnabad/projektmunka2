@@ -1,14 +1,14 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useStore } from "../store/store";
 
 // AvatarDisplay component remains the same
 function AvatarDisplay({ avatarUrl }) {
   return (
-    <div className="p-4 rounded-full shadow-lg">
+    <div className="p-2 rounded-full shadow-lg mx-2 border-2 border-zinc-600">
       <img
         src={avatarUrl}
         alt="Avatar"
-        className="w-20 h-20 rounded-full"
+        className="w-32 h-32 rounded-full"
         style={{ backgroundColor: "transparent" }}
       />
     </div>
@@ -16,7 +16,7 @@ function AvatarDisplay({ avatarUrl }) {
 }
 
 function AvatarBox() {
-  const { avatarUrl, setAvatarUrl } = useStore();  // Access avatarUrl from the global store
+  const { avatarUrl, setAvatarUrl } = useStore(); // Access avatarUrl from the global store
   const [seed, setSeed] = useState(generateRandomSeed());
   const [skinNum, setSkinNum] = useState(0);
   const [hatNum, setHatNum] = useState(0);
@@ -27,13 +27,18 @@ function AvatarBox() {
     return Math.random().toString(36).substring(2, 15);
   }
 
-  const skinColor = [
-    "614335", "ae5d29", "d08b5b", "e8d5a7", "ffdbb4", "10ff30"
-  ];
-  const hatStyle = [
-    "hijab", "frizzle", "winterHat02", "turban", "shavedSides", "fro"
-  ];
-  const eyeStyle = ["closed", "winkWacky", "side", "eyeRoll", "hearts", "cry"];
+  const skinColor = useMemo(
+    () => ["614335", "ae5d29", "d08b5b", "e8d5a7", "ffdbb4", "10ff30"],
+    []
+  );
+  const hatStyle = useMemo(
+    () => ["hijab", "frizzle", "winterHat02", "turban", "shavedSides", "fro"],
+    []
+  );
+  const eyeStyle = useMemo(
+    () => ["closed", "winkWacky", "side", "eyeRoll", "hearts", "cry"],
+    []
+  );
 
   // Generate avatar URL and store it in global state
   const getAvatarUrl = useCallback(() => {
@@ -42,22 +47,29 @@ function AvatarBox() {
         ? `&skinColor=${skinColor[skinNum]}&top=${hatStyle[hatNum]}&eyes=${eyeStyle[eyeNum]}`
         : ""
     }`;
-    setAvatarUrl(url); 
+    setAvatarUrl(url);
     return url;
-  }, [seed, skinColor, skinNum, hatStyle, hatNum, eyeStyle, eyeNum, changed, setAvatarUrl]);
-  
+  }, [
+    seed,
+    skinColor,
+    skinNum,
+    hatStyle,
+    hatNum,
+    eyeStyle,
+    eyeNum,
+    changed,
+    setAvatarUrl,
+  ]);
 
-  useEffect(() => {    
-    getAvatarUrl();  // Update avatar on component mount and whenever dependencies change
+  useEffect(() => {
+    getAvatarUrl();
   }, [seed, skinNum, hatNum, eyeNum, changed]);
 
-  // Randomize avatar
   const randomAvatar = () => {
     setSeed(generateRandomSeed());
     setChanged(false);
   };
 
-  // Cycle through options for skin, hat, and eye
   const cycle = (list, direction, state, set) => {
     if (direction) {
       if (state < list.length - 1) {
@@ -78,13 +90,22 @@ function AvatarBox() {
     >
       <div className="flex items-center">
         <div className="flex flex-col gap-2">
-          <button onClick={() => cycle(hatStyle, 0, hatNum, setHatNum)}>
+          <button
+            className="p-1 hover:text-zinc-500 text-zinc-400"
+            onClick={() => cycle(hatStyle, 0, hatNum, setHatNum)}
+          >
             &#9664;
           </button>
-          <button onClick={() => cycle(skinColor, 0, skinNum, setSkinNum)}>
+          <button
+            className="p-1 hover:text-zinc-500 text-zinc-400"
+            onClick={() => cycle(skinColor, 0, skinNum, setSkinNum)}
+          >
             &#9664;
           </button>
-          <button onClick={() => cycle(eyeStyle, 0, eyeNum, setEyeNum)}>
+          <button
+            className="p-1 hover:text-zinc-500 text-zinc-400"
+            onClick={() => cycle(eyeStyle, 0, eyeNum, setEyeNum)}
+          >
             &#9664;
           </button>
         </div>
@@ -92,19 +113,28 @@ function AvatarBox() {
           <AvatarDisplay avatarUrl={avatarUrl} />
         </div>
         <div className="flex flex-col gap-2">
-          <button onClick={() => cycle(hatStyle, 1, hatNum, setHatNum)}>
+          <button
+            className="p-1 hover:text-zinc-500 text-zinc-400"
+            onClick={() => cycle(hatStyle, 1, hatNum, setHatNum)}
+          >
             &#9654;
           </button>
-          <button onClick={() => cycle(skinColor, 1, skinNum, setSkinNum)}>
+          <button
+            className="p-1 hover:text-zinc-500 text-zinc-400"
+            onClick={() => cycle(skinColor, 1, skinNum, setSkinNum)}
+          >
             &#9654;
           </button>
-          <button onClick={() => cycle(eyeStyle, 1, eyeNum, setEyeNum)}>
+          <button
+            className="p-1 hover:text-zinc-500 text-zinc-400"
+            onClick={() => cycle(eyeStyle, 1, eyeNum, setEyeNum)}
+          >
             &#9654;
           </button>
         </div>
       </div>
       <button
-        className="shadow-lg w-1/2 p-2 border-2 rounded-lg border-zinc-500 hover:border-zinc-400"
+        className="shadow-lg p-2 border-2 rounded-lg border-zinc-600 hover:border-zinc-500"
         onClick={randomAvatar}
       >
         Random

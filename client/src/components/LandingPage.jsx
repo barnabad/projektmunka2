@@ -5,7 +5,8 @@ import toast from "react-hot-toast";
 import AvatarBox from "./CharSelect";
 
 function CreateDropdown() {
-  const { name, avatarUrl, drawTime, setDrawTime, maxRounds, setMaxRounds } = useStore();
+  const { name, avatarUrl, drawTime, setDrawTime, maxRounds, setMaxRounds } =
+    useStore();
   const [maxPlayers, setMaxPlayers] = useState(2);
   const [language, setLanguage] = useState("hungarian");
 
@@ -93,7 +94,11 @@ function JoinDropdown() {
 
   const handleJoin = () => {
     if (name && roomCode) {
-      socket.emit("join-room", { roomId: roomCode, name: name, avatarUrl: avatarUrl });
+      socket.emit("join-room", {
+        roomId: roomCode,
+        name: name,
+        avatarUrl: avatarUrl,
+      });
     } else toast.error("Name or Room Code missing");
   };
 
@@ -125,7 +130,7 @@ function LandingPage() {
   return (
     <div className="w-[400px] self-start mt-20">
       <div className="p-4 rounded-lg bg-zinc-700 mb-4">
-        <h1 className="mb-4 text-2xl text-center">Projektmunka</h1>
+        <h1 className="mb-4 text-2xl text-center">Doodl.io</h1>
         <input
           value={name}
           onChange={(e) => setName(e.target.value)}
@@ -161,14 +166,15 @@ function LandingPage() {
   );
 }
 
-//LANDINGPAGE avatarral 
+//LANDINGPAGE avatarral
 function LandingPageWithAvatar() {
-
   return (
     <div className="flex gap-4 items-center">
-
-      <div className="flex-shrink-0" style={{ height: '290px', width: '250px' }}> 
-        <AvatarBox/>
+      <div
+        className="flex-shrink-0"
+        style={{ height: "290px", width: "250px" }}
+      >
+        <AvatarBox />
       </div>
 
       <LandingPage />
