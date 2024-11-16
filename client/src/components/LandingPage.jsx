@@ -128,8 +128,9 @@ function LandingPage() {
   const { name, setName } = useStore();
 
   return (
-    <div className="w-[400px] self-start mt-20">
-      <div className="p-4 rounded-lg bg-zinc-700 mb-4">
+    <div className="-mt-44 flex items-start gap-4">
+      <AvatarBox />
+      <div className="p-4 rounded-lg bg-zinc-700 mb-4 w-[400px] relative">
         <h1 className="mb-4 text-2xl text-center">Doodl.io</h1>
         <input
           value={name}
@@ -160,26 +161,12 @@ function LandingPage() {
             Join Room
           </button>
         </div>
+        <div className="absolute mt-8 -left-0">
+          {dropdownPage ? <CreateDropdown /> : <JoinDropdown />}
+        </div>
       </div>
-      <div>{dropdownPage ? <CreateDropdown /> : <JoinDropdown />}</div>
     </div>
   );
 }
 
-//LANDINGPAGE avatarral
-function LandingPageWithAvatar() {
-  return (
-    <div className="flex gap-4 items-center">
-      <div
-        className="flex-shrink-0"
-        style={{ height: "290px", width: "250px" }}
-      >
-        <AvatarBox />
-      </div>
-
-      <LandingPage />
-    </div>
-  );
-}
-
-export default LandingPageWithAvatar;
+export default LandingPage;
