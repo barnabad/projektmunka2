@@ -115,9 +115,11 @@ function joinRoom(
 export function leaveRoom(io: Server, socket: Socket, ROOMS: RoomContainer) {
   const roomsList = Array.from(ROOMS);
   roomsList.forEach((room) => {
+    // ha benne van -> kitöröljük
     if (room[1].containsPlayer(socket.id)) {
       const removedPlayer = ROOMS.get(room[0])!.removePlayer(socket.id);
 
+      // ha nincs kitörölve átadjuk az ownership-et másnak
       if (!deleteRoom(ROOMS, room[0])) {
         updatePlayers(io, room[0], room[1].playersList);
         sendConnectionMsg(io, room[0], removedPlayer.name, false);
@@ -159,7 +161,8 @@ export function updatePlayers(io: Server, roomId: string, players: Player[]) {
   io.to(roomId).emit("updated-players", players);
 }
 
-function deleteRoom(ROOMS: RoomContainer, roomId: string): boolean | undefined {
+// Szoba törlése, ha nincs játékos benne
+export function deleteRoom(ROOMS: RoomContainer, roomId: string): boolean | undefined {
   let result: boolean | undefined;
   if (ROOMS.get(roomId)?.playersList.length === 0) {
     result = ROOMS.delete(roomId);
