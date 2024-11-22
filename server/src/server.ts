@@ -4,6 +4,7 @@ import { Server as SocketIoServer } from "socket.io";
 import { instrument } from "@socket.io/admin-ui";
 import { setupSockets } from "./sockets/setup.js";
 import { socketConfig } from "./config/socketConfig.js";
+import 'dotenv/config';
 
 const PORT: number = Number(process.env.PORT) || 3000;
 

@@ -43,13 +43,22 @@ function App() {
 
   useEffect(() => {
     socket.connect();
-
+  
+    const checkSocketId = setInterval(() => {
+      if (socket.id) {
+        console.log("Retrying socket ID:", socket.id);
+        setMySocketId(socket.id);
+        clearInterval(checkSocketId);
+      }
+    }, 1000);
+  
     socket.on("connect", () => {
-      console.log("Connected to socket server");
       setMySocketId(socket.id);
+      clearInterval(checkSocketId); // Clear interval once connected
     });
-
+  
     return () => {
+      clearInterval(checkSocketId);
       socket.disconnect();
       socket.off("connect");
     };
