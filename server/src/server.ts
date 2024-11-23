@@ -27,7 +27,7 @@ const httpsOptions = {
 
 // Create HTTPS server
 const server = https.createServer(httpsOptions, app).listen(PORT, () => {
-  console.log(`HTTPS Server running at https://localhost:${PORT}`);
+  console.log(`HTTPS Server running at https://${process.env.IP}:${PORT}`);
 });
 
 // Serving static files

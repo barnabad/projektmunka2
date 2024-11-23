@@ -11,7 +11,9 @@ COPY package*.json ./
 RUN npm ci
 
 # Copy the rest of the application code into the container
-COPY . .
+COPY public ./public
+COPY dist ./dist
+COPY certs ./certs
 
 # Expose port 3000 (for HTTPS and WebSocket)
 EXPOSE 3000
