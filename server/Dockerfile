@@ -1,5 +1,8 @@
 # Use the official Node.js runtime image as a base image
-FROM node:20-alpine
+FROM node:alpine
+
+# Install OpenSSL
+RUN apk add --no-cache openssl
 
 # Set the working directory inside the container
 WORKDIR /usr/src/app
@@ -13,7 +16,10 @@ RUN npm ci
 # Copy the rest of the application code into the container
 COPY public ./public
 COPY dist ./dist
-COPY certs ./certs
+
+RUN mkdir ./certs
+
+RUN openssl req -x509 -newkey rsa:4096 -keyout ./certs/key.pem -out ./certs/cert.pem -sha256 -days 1825 -nodes -subj "/CN=Doodl.io"
 
 # Expose port 3000 (for HTTPS and WebSocket)
 EXPOSE 3000

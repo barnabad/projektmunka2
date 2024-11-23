@@ -11,6 +11,7 @@ import fs from "fs";
 dotenv.config();
 
 const PORT = process.env.PORT || 3000;
+const IP = process.env.IP || "127.0.0.1";
 
 // Path to SSL certificate and key
 const SSL_CERT_PATH = "./certs/cert.pem";
@@ -27,7 +28,7 @@ const httpsOptions = {
 
 // Create HTTPS server
 const server = https.createServer(httpsOptions, app).listen(PORT, () => {
-  console.log(`HTTPS Server running at https://${process.env.IP}:${PORT}`);
+  console.log(`HTTPS Server running at https://${IP}:${PORT}`);
 });
 
 // Serving static files
