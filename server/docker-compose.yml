@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  doodl-cont:
+    build:
+      context: .  # Build context pointing to the current directory
+      dockerfile: Dockerfile  # Path to your Dockerfile
+
+    image: doodl-cont:latest  # Replace with your actual image name and tag
+    container_name: doodl-cont
+    ports:
+      - "3000:3000"  # Map port 3000 on the host to port 3000 in the container
+    environment:
+      NODE_ENV: dev  # Replace with the desired environment
+      USERNAME: your-username  # Replace with your actual username
+      PASSWORD: your-password  # Replace with your actual password
+      IP: 127.0.0.1  # Replace with your desired IP
