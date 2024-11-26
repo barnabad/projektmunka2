@@ -10,37 +10,37 @@ export function chatSocket(io: Server, socket: Socket, ROOMS: RoomContainer) {
 
     // Rajzoló nem írhat
     if (socket.id === room!.currentDrawer) {
-      console.log("rajzolo");
+      //console.log("rajzolo");
       return;
     }
     // Aki eltalálta nem írhat
     if (player!.guessed) {
-      console.log("te mar megnyerted");
+      //console.log("te mar megnyerted");
       return;
     }
     // Helyes eredémny
     if (room!.currentWord === message.toLocaleLowerCase()) {
+      const numberofPlayersGuessedRight = room!.playersList.filter(player => player.guessed).length;
       player!.guessed = true;
-      player!.score += 100;
+      player!.score += Math.max(0, 100 - numberofPlayersGuessedRight * 10);
 
       const drawer = room!.findPlayer(room!.currentDrawer);
 
       if (drawer) {
-        drawer.score += 50;
+        drawer.score += 10;
       }
 
-      io.to(roomId).emit("new-message", {
-        name: "Server Info",
-        message: `${name} guessed the word correctly`,
-        senderId: "server",
-      });
+      if( room!.language == 'hungarian')
+        io.to(roomId).emit("new-message", { name: "Server Info", message: `${name} kitalálta a szót`, senderId: "server"})
+      else
+        io.to(roomId).emit("new-message", {name: "Server Info",message: `${name} guessed the word correctly`,senderId: "server"});
       updatePlayers(io, roomId, room!.playersList);
-      console.log("eltalálta");
+      //console.log("eltalálta");
     }
     // Sima üzenet
     else {
       io.to(roomId).emit("new-message", { name, message, senderId: socket.id });
-      console.log("sima üzenet");
+      //console.log("sima üzenet");
     }
   });
 }
@@ -49,11 +49,16 @@ export function sendConnectionMsg(
   io: Server,
   roomId: string,
   name: string,
-  joined: boolean
+  joined: boolean,
+  lang: "english" | "hungarian",
 ) {
-  io.to(roomId).emit("new-message", {
-    name: "Server Info",
-    message: `${name} ${joined ? "joined" : "left"} the room`,
-    senderId: "server",
-  });
+  if (lang == 'hungarian')
+    io.to(roomId).emit("new-message", 
+    {name: "Server Info",message: `${name} ${joined ? "csatlakozott" : "elhagyta"} a szobát`,
+    senderId: "server",});
+    else{
+      io.to(roomId).emit("new-message", 
+        {name: "Server Info",message: `${name} ${joined ? "joined" : "left"} the room`,
+        senderId: "server",});
+    }
 }

@@ -1,8 +1,10 @@
 {
   "name": "doodl-client",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
+  "author": {"name": "Barnabás Tóth"},
+  "contributors": ["Alex Nagy", "Péter István Gogolyák"],
   "scripts": {
     "dev": "vite",
     "buildWin": "vite build && xcopy dist\\* ..\\server\\public /E /Y",

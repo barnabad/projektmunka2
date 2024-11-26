@@ -10,8 +10,17 @@ export function roomSocket(io: Server, socket: Socket, ROOMS: RoomContainer) {
     createRoom(io, socket, data, ROOMS)
   );
 
-  socket.on("join-room", ({ roomId, name, avatarUrl }: { roomId: string; name: string, avatarUrl: string }) =>
-    joinRoom(io, socket, ROOMS, roomId, name, avatarUrl)
+  socket.on(
+    "join-room",
+    ({
+      roomId,
+      name,
+      avatarUrl,
+    }: {
+      roomId: string;
+      name: string;
+      avatarUrl: string;
+    }) => joinRoom(io, socket, ROOMS, roomId, name, avatarUrl)
   );
 
   socket.on("leave-room", () => leaveRoom(io, socket, ROOMS));
@@ -30,14 +39,22 @@ type CreateRoomType = {
   };
 };
 
+const createRandomID = function (length = 6) {
+  return Math.random()
+    .toString(36)
+    .substring(2, length + 2);
+};
+
 function createRoom(
   io: Server,
   socket: Socket,
   { name, avatarUrl, options }: CreateRoomType,
   ROOMS: RoomContainer
 ) {
-  // TODO: random szoba id létrehozása
-  const roomId: string = Math.floor(Math.random() * 100).toString();
+  let roomId: string = "";
+  do {
+    roomId = createRandomID();
+  } while (ROOMS.get(roomId));
 
   try {
     // Szoba létrehozás és csatlakozás
@@ -62,10 +79,12 @@ function createRoom(
       ROOMS.get(roomId)!.maxRound
     );
     updatePlayers(io, roomId, ROOMS.get(roomId)!.playersList);
-    sendConnectionMsg(io, roomId, name, true);
+    sendConnectionMsg(io, roomId, name, true, options.language);
     // Hiba kiiratása console-ra
   } catch (error) {
-    sendError(socket, "Error creating room");
+    options.language === "hungarian"
+      ? sendError(socket, "Hiba a szoba létrehozásában")
+      : sendError(socket, "Error creating room");
     console.log("Error in create-room", error);
   }
 }
@@ -100,10 +119,12 @@ function joinRoom(
         room.maxRound
       );
       updatePlayers(io, roomId, room.playersList);
-      sendConnectionMsg(io, roomId, name, true);
+      sendConnectionMsg(io, roomId, name, true, room.language);
       // JohnDoe123 has joined room
     } catch (error) {
-      sendError(socket, "Error joining room");
+      room!.language == "hungarian"
+        ? sendError(socket, "Hiba történt a szobába csatlakozás során")
+        : sendError(socket, "Error joining room");
       console.error("Error joining room", error);
     }
   } else {
@@ -122,17 +143,30 @@ export function leaveRoom(io: Server, socket: Socket, ROOMS: RoomContainer) {
       // ha nincs kitörölve átadjuk az ownership-et másnak
       if (!deleteRoom(ROOMS, room[0])) {
         updatePlayers(io, room[0], room[1].playersList);
-        sendConnectionMsg(io, room[0], removedPlayer.name, false);
+        sendConnectionMsg(
+          io,
+          room[0],
+          removedPlayer.name,
+          false,
+          room[1].language
+        );
         // Handle owner disconnect
         if (room[1].ownerId === removedPlayer.playerId) {
           const newOwner = room[1].playersList[0];
           room[1].ownerId = newOwner.playerId;
           io.to(room[0]).emit("owner-change", newOwner.playerId);
-          io.to(room[0]).emit("new-message", {
-            name: "Server Info",
-            message: `${newOwner.name} is now the room owner`,
-            senderId: "server",
-          });
+          if (room[1].language == "hungarian")
+            io.to(room[0]).emit("new-message", {
+              name: "Server Info",
+              message: `${newOwner.name} lett a szoba tulajdonosa`,
+              senderId: "server",
+            });
+          else
+            io.to(room[0]).emit("new-message", {
+              name: "Server Info",
+              message: `${newOwner.name} is now the room owner`,
+              senderId: "server",
+            });
         }
       }
       return;
@@ -162,11 +196,14 @@ export function updatePlayers(io: Server, roomId: string, players: Player[]) {
 }
 
 // Szoba törlése, ha nincs játékos benne
-export function deleteRoom(ROOMS: RoomContainer, roomId: string): boolean | undefined {
+export function deleteRoom(
+  ROOMS: RoomContainer,
+  roomId: string
+): boolean | undefined {
   let result: boolean | undefined;
   if (ROOMS.get(roomId)?.playersList.length === 0) {
     result = ROOMS.delete(roomId);
-    console.log("Room deleted with id: ", roomId);
+    //console.log("Room deleted with id: ", roomId);
   }
   return result;
 }
