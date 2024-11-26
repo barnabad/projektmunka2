@@ -28,7 +28,7 @@ function AvatarBox() {
   }
 
   const skinColor = useMemo(
-    () => ["614335", "ae5d29", "d08b5b", "e8d5a7", "ffdbb4", "10ff30"],
+    () => ["8d5524", "c68642", "e0ac69", "f1c27d", "ffdbac", "31a30f"],
     []
   );
   const hatStyle = useMemo(
