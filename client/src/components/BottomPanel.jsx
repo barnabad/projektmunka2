@@ -1,4 +1,4 @@
-import { CircleDot, Eraser, PaintBucket, Pencil, Trash2 } from "lucide-react";
+import { CircleDot, Eraser, Pencil, Trash2 } from "lucide-react";
 import { useStore } from "../store/store";
 import * as Slider from "@radix-ui/react-slider";
 import * as Popover from "@radix-ui/react-popover";
@@ -34,17 +34,16 @@ const colorNames = [
   ],
 ];
 
-function ColorBlock({ color, setColor, setLastColor, isDrawTool }) {
+function ColorBlock({ color, setColor, setLastColor, setIsDrawTool }) {
   return (
     <div
       className="w-[25px]"
       style={{ backgroundColor: color }}
       data-color={color}
       onClick={(e) => {
-        if (isDrawTool) {
-          setColor(e.target.dataset.color);
-          setLastColor(e.target.dataset.color);
-        }
+        setColor(e.target.dataset.color);
+        setLastColor(e.target.dataset.color);
+        setIsDrawTool(true);
       }}
     ></div>
   );
@@ -120,9 +119,9 @@ function BottomPanel() {
                 <ColorBlock
                   key={item}
                   color={item}
-                  isDrawTool={isDrawTool}
                   setColor={setColor}
                   setLastColor={setLastColor}
+                  setIsDrawTool={setIsDrawTool}
                 />
               ))}
             </div>
@@ -131,9 +130,9 @@ function BottomPanel() {
                 <ColorBlock
                   key={item}
                   color={item}
-                  isDrawTool={isDrawTool}
                   setColor={setColor}
                   setLastColor={setLastColor}
+                  setIsDrawTool={setIsDrawTool}
                 />
               ))}
             </div>
