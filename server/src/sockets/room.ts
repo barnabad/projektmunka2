@@ -76,7 +76,8 @@ function createRoom(
       socket.id,
       roomId,
       ROOMS.get(roomId)!.drawTime,
-      ROOMS.get(roomId)!.maxRound
+      ROOMS.get(roomId)!.maxRound,
+      ROOMS.get(roomId)!.language
     );
     updatePlayers(io, roomId, ROOMS.get(roomId)!.playersList);
     sendConnectionMsg(io, roomId, name, true, options.language);
@@ -116,7 +117,8 @@ function joinRoom(
         room.ownerId,
         roomId,
         room.drawTime,
-        room.maxRound
+        room.maxRound,
+        room.language
       );
       updatePlayers(io, roomId, room.playersList);
       sendConnectionMsg(io, roomId, name, true, room.language);
@@ -180,13 +182,15 @@ function joinSuccessful(
   ownerId: string,
   roomCode: string,
   drawTime: number,
-  maxRound: number
+  maxRound: number,
+  language: string
 ) {
   socket.emit("join-successful", {
     ownerId: ownerId,
     roomCode: roomCode,
     maxRound: maxRound,
     drawTime: drawTime,
+    language: language,
   });
 }
 

@@ -23,7 +23,8 @@ function Message({ senderId, name, message }) {
 
 function ChatPanel() {
   const [inputText, setInputText] = useState("");
-  const { name, myRoomId, chatMessages, mySocketId, drawerId } = useStore();
+  const { name, myRoomId, chatMessages, mySocketId, drawerId, language } =
+    useStore();
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -53,7 +54,9 @@ function ChatPanel() {
             disabled={drawerId === mySocketId}
             value={inputText}
             onChange={(e) => setInputText(e.target.value)}
-            placeholder="Guess something..."
+            placeholder={
+              language === "english" ? "Guess something..." : "Írj valamit"
+            }
             className="w-full shadow-lg focus:outline focus:outline-2 focus:outline-zinc-500 rounded-lg p-2 bg-zinc-600 text-white disabled:cursor-not-allowed"
             type="text"
           />

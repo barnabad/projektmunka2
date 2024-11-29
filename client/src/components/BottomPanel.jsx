@@ -92,6 +92,7 @@ function BottomPanel() {
     drawerId,
     gameState,
     myRoomId,
+    language,
   } = useStore();
 
   const [isDrawTool, setIsDrawTool] = useState(true);
@@ -105,7 +106,7 @@ function BottomPanel() {
   return (
     <div className="rounded-lg bg-zinc-700 flex gap-3">
       <div className="w-[275px] p-3 text-xl flex justify-center items-center font-semibold">
-        {`Round ${round} of ${maxRounds}`}
+        {`${language === "english" ? "Round" : "Kör"} ${round} / ${maxRounds}`}
       </div>
       {mySocketId === drawerId && gameState === "playing" && (
         <div className="flex-grow p-3 gap-3 flex justify-center items-center">

@@ -39,11 +39,12 @@ function App() {
     thickness,
     setIsDrawing,
     gameState,
+    setLanguage,
   } = useStore();
 
   useEffect(() => {
     socket.connect();
-  
+
     const checkSocketId = setInterval(() => {
       if (socket.id) {
         console.log("Retrying socket ID:", socket.id);
@@ -51,12 +52,12 @@ function App() {
         clearInterval(checkSocketId);
       }
     }, 1000);
-  
+
     socket.on("connect", () => {
       setMySocketId(socket.id);
       clearInterval(checkSocketId); // Clear interval once connected
     });
-  
+
     return () => {
       clearInterval(checkSocketId);
       socket.disconnect();
@@ -67,11 +68,12 @@ function App() {
   useEffect(() => {
     socket.on(
       "join-successful",
-      ({ roomCode, ownerId, maxRound, drawTime }) => {
+      ({ roomCode, ownerId, maxRound, drawTime, language }) => {
         setMyRoomId(roomCode);
         setOwnerId(ownerId);
         setDrawTime(drawTime);
         setMaxRounds(maxRound);
+        setLanguage(language);
         console.log("join success");
         // hang ide
       }
