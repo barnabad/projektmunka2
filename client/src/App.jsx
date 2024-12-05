@@ -4,6 +4,7 @@ import LandingPage from "./components/LandingPage";
 import { useStore } from "./store/store";
 import { useEffect, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
+import { sounds } from "./utils/sounds";
 
 function App() {
   const [bigTime, setBigTime] = useState(null);
@@ -76,17 +77,34 @@ function App() {
         setLanguage(language);
         console.log("join success");
         // hang ide
+        sounds.joinSuccess.play();
       }
     );
     socket.on("connect_error", () => toast.error("Connection error"));
     socket.on("error", (error) => toast.error(error));
     socket.on("updated-players", (players) => setPlayers(players));
     socket.on("new-message", (msgData) => {
+      if (
+        (msgData.senderId === "server" &&
+          msgData.message.includes("guessed")) ||
+        msgData.message.includes("kitalálta")
+      ) {
+        sounds.correctSound.play();
+      }
+      if (
+        (msgData.senderId === "server" && msgData.message.includes("left")) ||
+        msgData.message.includes("elhagyta")
+      ) {
+        sounds.disconnectSound.play();
+      }
       setChatMessages(msgData);
     });
     socket.on("start-round", (currentRound) => {
       setGameState("choosing");
       setRound(currentRound);
+      if (currentRound !== 1) {
+        sounds.timeUpSound.play();
+      }
     });
     socket.on("choose-word", (words) => setWordOptions(words));
     socket.on("update-drawer", (data) => {
@@ -133,6 +151,7 @@ function App() {
         setChooseTimeInterval(null);
       }
       setChooseTime(15);
+      sounds.roundStart.play();
 
       setDrawTimeLeft(drawTime);
 
