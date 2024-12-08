@@ -23,11 +23,20 @@ function Message({ senderId, name, message }) {
 
 function ChatPanel() {
   const [inputText, setInputText] = useState("");
-  const { name, myRoomId, chatMessages, mySocketId, drawerId, language } =
-    useStore();
+  const {
+    name,
+    myRoomId,
+    chatMessages,
+    mySocketId,
+    drawerId,
+    language,
+    gameState,
+  } = useStore();
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (gameState !== "playing" || !inputText) return;
+
     socket.emit("send-message", {
       name: name,
       roomId: myRoomId,
@@ -51,7 +60,7 @@ function ChatPanel() {
       <div>
         <form onSubmit={handleSubmit}>
           <input
-            disabled={drawerId === mySocketId}
+            disabled={drawerId === mySocketId || gameState !== "playing"}
             value={inputText}
             onChange={(e) => setInputText(e.target.value)}
             placeholder={
