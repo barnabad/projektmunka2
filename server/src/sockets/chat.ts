@@ -3,26 +3,27 @@ import { RoomContainer } from "./setup.js";
 import { updatePlayers } from "./room.js";
 
 export function chatSocket(io: Server, socket: Socket, ROOMS: RoomContainer) {
-  // Send message to the socket's room
+  // Receiving message from socket
   socket.on("send-message", ({ name, roomId, message }) => {
     const room = ROOMS.get(roomId);
     const player = room!.findPlayer(socket.id);
 
     // Rajzoló nem írhat
     if (socket.id === room!.currentDrawer) {
-      //console.log("rajzolo");
       return;
     }
+
     // Aki eltalálta nem írhat
     if (player!.guessed) {
-      //console.log("te mar megnyerted");
       return;
     }
+
     // Helyes eredémny
     if (
       room!.currentWord === message.toLocaleLowerCase() &&
       room!.currentWord
     ) {
+      // Dinamikus pontozás
       const numberofPlayersGuessedRight = room!.playersList.filter(
         (player) => player.guessed,
       ).length;
@@ -31,9 +32,12 @@ export function chatSocket(io: Server, socket: Socket, ROOMS: RoomContainer) {
 
       const drawer = room!.findPlayer(room!.currentDrawer);
 
+      // Rajzoló kap 10 pontot
       if (drawer) {
         drawer.score += 10;
       }
+
+      io.to(socket.id).emit("reveal-word", room!.currentWord);
 
       if (room!.language == "hungarian")
         io.to(roomId).emit("new-message", {

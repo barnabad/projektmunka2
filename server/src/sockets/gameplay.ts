@@ -200,6 +200,7 @@ function gameplayLoop(io: Server, ROOMS: RoomContainer, roomId: string) {
   // Karakterek felfedése
   let revealedPos: number[] = [];
   const felfedDB = Math.ceil(room.currentWord.length / 4);
+  //console.log("felfed darab: " + felfedDB);
 
   // folyamatosan másodpercenként lefut
   const GameplayloopId = setInterval(() => {
@@ -209,6 +210,8 @@ function gameplayLoop(io: Server, ROOMS: RoomContainer, roomId: string) {
       clearTimeout(roundTimer);
       return;
     }
+
+    idozito--;
 
     // Ha van még mit felfedni és 7 másodperc eltelt akkor
     // felfed egy random karaktert
