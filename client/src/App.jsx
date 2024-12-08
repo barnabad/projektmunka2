@@ -102,11 +102,16 @@ function App() {
     socket.on("start-round", (currentRound) => {
       setGameState("choosing");
       setRound(currentRound);
+      if (currentRound == 1) {
+        sounds.startRound.play();
+      }
       if (currentRound !== 1) {
         sounds.timeUpSound.play();
       }
     });
-    socket.on("choose-word", (words) => setWordOptions(words));
+    socket.on("choose-word", (words) => {
+      setWordOptions(words);
+    });
     socket.on("update-drawer", (data) => {
       if (ctx) {
         ctx.clearRect(0, 0, canvasWidth, canvasHeight);
@@ -131,7 +136,6 @@ function App() {
         decreaseChooseTime();
       }, 1000);
       setChooseTimeInterval(intervalId);
-
       if (bigTime) {
         clearInterval(bigTime);
         setBigTime(null);
@@ -171,7 +175,7 @@ function App() {
 
     socket.on("game-end", () => {
       setGameState("postGame");
-
+      sounds.gameOver.play();
       if (bigTime) {
         clearInterval(bigTime);
         setBigTime(null);
