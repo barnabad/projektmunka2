@@ -2,7 +2,7 @@ import { useStore } from "../store/store";
 import { socket } from "../utils/socket";
 
 export function PreGameContent() {
-  const { ownerId, mySocketId, myRoomId } = useStore();
+  const { ownerId, mySocketId, myRoomId, language } = useStore();
 
   const handleStartGame = () => {
     socket.emit("start-game", myRoomId);
@@ -15,10 +15,14 @@ export function PreGameContent() {
           onClick={handleStartGame}
           className="p-2 shadow-lg border-zinc-600 bg-zinc-700 border-2 rounded-lg hover:border-zinc-500"
         >
-          Start Game
+          {language === "english" ? "Start Game" : "Játék indítása"}
         </button>
       ) : (
-        <div>Waiting for game to start</div>
+        <div>
+          {language === "english"
+            ? "Waiting for game to start"
+            : "Várakozás a játék kezdésére"}
+        </div>
       )}
     </div>
   );
@@ -33,6 +37,7 @@ export function ChooseWordContent() {
     drawerName,
     setCurrentWord,
     chooseTime,
+    language,
   } = useStore();
 
   const handleClick = (word) => {
@@ -44,11 +49,15 @@ export function ChooseWordContent() {
     <div>
       {drawerId === mySocketId ? (
         <div className="z-20 flex flex-col gap-4 text-xl items-center">
-          <div>Choose a word...</div>
+          <div>
+            {language === "english"
+              ? "Choose a word..."
+              : "Válassz egy szót..."}
+          </div>
           <div className="flex gap-2">
             {wordOptions.map(
               (
-                item // !
+                item, // !
               ) => (
                 <button
                   onClick={() => handleClick(item)}
@@ -57,13 +66,16 @@ export function ChooseWordContent() {
                 >
                   {item}
                 </button>
-              )
+              ),
             )}
           </div>
           <div>{chooseTime}</div>
         </div>
       ) : (
-        <div className="z-20 text-xl">{drawerName} is choosing a word...</div>
+        <div className="z-20 text-xl">
+          {drawerName}{" "}
+          {language === "english" ? "is choosing a word..." : "szót választ..."}
+        </div>
       )}
     </div>
   );
@@ -100,7 +112,7 @@ export function RoundEndContent() {
 }
 
 export function PostGameContent() {
-  const { mySocketId, ownerId, myRoomId } = useStore();
+  const { mySocketId, ownerId, myRoomId, language } = useStore();
 
   const playAgain = () => {
     socket.emit("play-again", myRoomId);
@@ -110,14 +122,14 @@ export function PostGameContent() {
     <div className="flex flex-col gap-5 text-lg text-center">
       <div>
         {/*TODO: Eredmenyek ide*/}
-        Results...
+        {language === "english" ? "Results..." : "Eredmények..."}
       </div>
       {mySocketId === ownerId && (
         <button
           onClick={playAgain}
           className="p-2 shadow-lg border-zinc-600 bg-zinc-700 border-2 rounded-lg hover:border-zinc-500"
         >
-          Play Again
+          {language === "english" ? "Play Again" : "Új játék"}
         </button>
       )}
     </div>
