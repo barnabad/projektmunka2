@@ -1,5 +1,10 @@
 services:
   doodl-cont:
+    # Build context pointing to the current directory
+    build:
+      context: .
+      dockerfile: Dockerfile
+
     image: dumach/doodl:latest
     container_name: doodl-cont
     ports:

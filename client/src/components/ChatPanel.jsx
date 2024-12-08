@@ -40,7 +40,7 @@ function ChatPanel() {
     socket.emit("send-message", {
       name: name,
       roomId: myRoomId,
-      message: inputText,
+      message: inputText.trim(),
     });
     setInputText("");
   };

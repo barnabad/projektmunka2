@@ -9,10 +9,10 @@ import { englishWords } from "../data/englishWords.js";
 export function gamePlaySocket(
   io: SocketIoServer,
   socket: Socket,
-  ROOMS: RoomContainer
+  ROOMS: RoomContainer,
 ) {
   socket.on("start-game", (roomId: string) =>
-    startGame(io, socket, roomId, ROOMS)
+    startGame(io, socket, roomId, ROOMS),
   );
 
   socket.on("receive-word", ({ roomId, word }) => {
@@ -52,7 +52,7 @@ function startGame(
   io: SocketIoServer,
   socket: Socket,
   roomId: string,
-  ROOMS: RoomContainer
+  ROOMS: RoomContainer,
 ) {
   const room = ROOMS.get(roomId);
 
@@ -95,25 +95,23 @@ function choosingWordLoop(
   io: Server,
   ROOMS: RoomContainer,
   roomId: string,
-  inputwords: string[] | undefined
+  inputwords: string[] | undefined,
 ) {
-
   const room = ROOMS.get(roomId)!;
 
   // Másodpercenként ellenőrzi segédfüggvény
   const checkValue = () => {
-
     // Ha kiléptek már a szobából és nem létezik
-    if(!ROOMS.get(roomId)){
-      clearInterval(intervalId); 
-      clearTimeout(timeoutId); 
+    if (!ROOMS.get(roomId)) {
+      clearInterval(intervalId);
+      clearTimeout(timeoutId);
       return;
     }
 
     if (room.currentWord) {
       // ha választottak
-      console.log("Az érték be van állítva: ", room.currentWord);
-      clearInterval(intervalId); 
+      //console.log("Az érték be van állítva: ", room.currentWord);
+      clearInterval(intervalId);
       clearTimeout(timeoutId);
 
       gameplayLoop(io, ROOMS, roomId);
@@ -122,10 +120,9 @@ function choosingWordLoop(
       io.to(roomId).emit("update-word-length", room.currentWord.length);
     } else {
       // ha nem választottak
-      console.log("Még nem állítottak be értéket.");
+      //console.log("Még nem állítottak be értéket.");
     }
   };
-
 
   // Visszaszámláló a szó választás végéig
   // ha letellik az idő a függvény választ egy szót véletlenszerűen
@@ -144,7 +141,7 @@ function choosingWordLoop(
 
     console.log(
       "Az idő lejárt, alapértelmezett érték lett beállítva: ",
-      room.currentWord
+      room.currentWord,
     );
 
     // Játékosok értesítése
@@ -165,7 +162,6 @@ function gameplayLoop(io: Server, ROOMS: RoomContainer, roomId: string) {
 
   // Kör időzítő indítása, végén felfedi a szót és indul az újabb menet
   const roundTimer = setTimeout(() => {
-
     io.to(roomId).emit("reveal-word", room.currentWord);
     clearInterval(GameplayloopId);
 
@@ -177,7 +173,7 @@ function gameplayLoop(io: Server, ROOMS: RoomContainer, roomId: string) {
 
     // Ha van következő játékos (kör nem fejeződött be)
     if (nextPlayer) {
-      console.log("kövi játékos", nextPlayer);
+      //console.log("kövi játékos", nextPlayer);
       room.currentDrawer = nextPlayer;
       const inputwords = chooseWord(io, roomId, room);
       // Szó kiválasztás újra indítása
@@ -187,7 +183,7 @@ function gameplayLoop(io: Server, ROOMS: RoomContainer, roomId: string) {
     } else {
       if (room.currentRound === room.maxRound) {
         // játék vége
-        console.log("jatek vege");
+        //console.log("jatek vege");
         io.to(roomId).emit("game-end");
       } else {
         // kövi kör
@@ -195,30 +191,24 @@ function gameplayLoop(io: Server, ROOMS: RoomContainer, roomId: string) {
         room.drawersList = room.playersList.map((player) => player.playerId);
         nextPlayer = room.drawersList.pop();
         nextPlayer ? (room.currentDrawer = nextPlayer) : false;
-        console.log("kövi kör ", room.currentRound);
+        //console.log("kövi kör ", room.currentRound);
         startRound(io, ROOMS, roomId);
       }
     }
   }, room.drawTime * 1000);
 
-
-
   // Karakterek felfedése
   let revealedPos: number[] = [];
   const felfedDB = Math.ceil(room.currentWord.length / 4);
-  console.log("felfed db: ", felfedDB);
 
   // folyamatosan másodpercenként lefut
   const GameplayloopId = setInterval(() => {
-
     // ha nincs szoba akkor leállítja a számlálókat
-    if (!ROOMS.get(roomId)){
-      clearInterval(GameplayloopId); 
+    if (!ROOMS.get(roomId)) {
+      clearInterval(GameplayloopId);
       clearTimeout(roundTimer);
       return;
     }
-
-    console.log(idozito--);
 
     // Ha van még mit felfedni és 7 másodperc eltelt akkor
     // felfed egy random karaktert
@@ -245,10 +235,10 @@ function gameplayLoop(io: Server, ROOMS: RoomContainer, roomId: string) {
 function chooseWord(
   io: SocketIoServer,
   roomId: string,
-  room: Room
+  room: Room,
 ): string[] | undefined {
   const drawer = room.playersList.find(
-    (player) => player.playerId === room.currentDrawer
+    (player) => player.playerId === room.currentDrawer,
   );
 
   if (drawer) {

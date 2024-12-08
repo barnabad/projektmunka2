@@ -19,10 +19,15 @@ export function chatSocket(io: Server, socket: Socket, ROOMS: RoomContainer) {
       return;
     }
     // Helyes eredémny
-    if (room!.currentWord === message.toLocaleLowerCase()) {
-      const numberofPlayersGuessedRight = room!.playersList.filter(player => player.guessed).length;
+    if (
+      room!.currentWord === message.toLocaleLowerCase() &&
+      room!.currentWord
+    ) {
+      const numberofPlayersGuessedRight = room!.playersList.filter(
+        (player) => player.guessed,
+      ).length;
       player!.guessed = true;
-      player!.score += Math.max(0, 100 - numberofPlayersGuessedRight * 10);
+      player!.score += Math.max(10, 100 - numberofPlayersGuessedRight * 10);
 
       const drawer = room!.findPlayer(room!.currentDrawer);
 
@@ -30,10 +35,18 @@ export function chatSocket(io: Server, socket: Socket, ROOMS: RoomContainer) {
         drawer.score += 10;
       }
 
-      if( room!.language == 'hungarian')
-        io.to(roomId).emit("new-message", { name: "Server Info", message: `${name} kitalálta a szót`, senderId: "server"})
+      if (room!.language == "hungarian")
+        io.to(roomId).emit("new-message", {
+          name: "Server Info",
+          message: `${name} kitalálta a szót`,
+          senderId: "server",
+        });
       else
-        io.to(roomId).emit("new-message", {name: "Server Info",message: `${name} guessed the word correctly`,senderId: "server"});
+        io.to(roomId).emit("new-message", {
+          name: "Server Info",
+          message: `${name} guessed the word correctly`,
+          senderId: "server",
+        });
       updatePlayers(io, roomId, room!.playersList);
       //console.log("eltalálta");
     }
@@ -52,13 +65,17 @@ export function sendConnectionMsg(
   joined: boolean,
   lang: "english" | "hungarian",
 ) {
-  if (lang == 'hungarian')
-    io.to(roomId).emit("new-message", 
-    {name: "Server Info",message: `${name} ${joined ? "csatlakozott" : "elhagyta"} a szobát`,
-    senderId: "server",});
-    else{
-      io.to(roomId).emit("new-message", 
-        {name: "Server Info",message: `${name} ${joined ? "joined" : "left"} the room`,
-        senderId: "server",});
-    }
+  if (lang == "hungarian")
+    io.to(roomId).emit("new-message", {
+      name: "Server Info",
+      message: `${name} ${joined ? "csatlakozott" : "elhagyta"} a szobát`,
+      senderId: "server",
+    });
+  else {
+    io.to(roomId).emit("new-message", {
+      name: "Server Info",
+      message: `${name} ${joined ? "joined" : "left"} the room`,
+      senderId: "server",
+    });
+  }
 }
