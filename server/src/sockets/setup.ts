@@ -11,7 +11,19 @@ let ROOMS: RoomContainer = new Map();
 // Websocket beállítása
 export function setupSockets(io: SocketIoServer) {
   io.on("connection", (socket: Socket) => {
-    console.log(`User ${socket.id} connected`);
+    const most = new Date();
+    const time =
+      most.getFullYear().toString() +
+      "-" +
+      (most.getMonth() + 1).toString() +
+      "-" +
+      most.getDate().toString() +
+      "T" +
+      most.getHours() +
+      ":" +
+      most.getMinutes();
+
+    console.log(`${time} INFO User ${socket.id} connected`);
 
     // Szobába csatlakozás
     roomSocket(io, socket, ROOMS);
@@ -23,7 +35,7 @@ export function setupSockets(io: SocketIoServer) {
     chatSocket(io, socket, ROOMS);
 
     socket.on("disconnect", () => {
-      console.log(`User ${socket.id} disconnected`);
+      console.log(`${time} INFO User ${socket.id} disconnected`);
       leaveRoom(io, socket, ROOMS);
     });
   });
