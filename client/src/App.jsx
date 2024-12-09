@@ -4,6 +4,7 @@ import LandingPage from "./components/LandingPage";
 import { useStore } from "./store/store";
 import { useEffect, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
+import { sounds } from "./utils/sounds";
 
 function App() {
   const [bigTime, setBigTime] = useState(null);
@@ -39,17 +40,27 @@ function App() {
     thickness,
     setIsDrawing,
     gameState,
+    setLanguage,
   } = useStore();
 
   useEffect(() => {
     socket.connect();
 
+    const checkSocketId = setInterval(() => {
+      if (socket.id) {
+        console.log("Retrying socket ID:", socket.id);
+        setMySocketId(socket.id);
+        clearInterval(checkSocketId);
+      }
+    }, 1000);
+
     socket.on("connect", () => {
-      console.log("Connected to socket server");
       setMySocketId(socket.id);
+      clearInterval(checkSocketId); // Clear interval once connected
     });
 
     return () => {
+      clearInterval(checkSocketId);
       socket.disconnect();
       socket.off("connect");
     };
@@ -58,26 +69,49 @@ function App() {
   useEffect(() => {
     socket.on(
       "join-successful",
-      ({ roomCode, ownerId, maxRound, drawTime }) => {
+      ({ roomCode, ownerId, maxRound, drawTime, language }) => {
         setMyRoomId(roomCode);
         setOwnerId(ownerId);
         setDrawTime(drawTime);
         setMaxRounds(maxRound);
+        setLanguage(language);
         console.log("join success");
         // hang ide
-      }
+        sounds.joinSuccess.play();
+      },
     );
     socket.on("connect_error", () => toast.error("Connection error"));
     socket.on("error", (error) => toast.error(error));
     socket.on("updated-players", (players) => setPlayers(players));
     socket.on("new-message", (msgData) => {
+      if (
+        (msgData.senderId === "server" &&
+          msgData.message.includes("guessed")) ||
+        msgData.message.includes("kitalálta")
+      ) {
+        sounds.correctSound.play();
+      }
+      if (
+        (msgData.senderId === "server" && msgData.message.includes("left")) ||
+        msgData.message.includes("elhagyta")
+      ) {
+        sounds.disconnectSound.play();
+      }
       setChatMessages(msgData);
     });
     socket.on("start-round", (currentRound) => {
       setGameState("choosing");
       setRound(currentRound);
+      if (currentRound == 1) {
+        sounds.startRound.play();
+      }
+      if (currentRound !== 1) {
+        sounds.timeUpSound.play();
+      }
     });
-    socket.on("choose-word", (words) => setWordOptions(words));
+    socket.on("choose-word", (words) => {
+      setWordOptions(words);
+    });
     socket.on("update-drawer", (data) => {
       if (ctx) {
         ctx.clearRect(0, 0, canvasWidth, canvasHeight);
@@ -102,7 +136,6 @@ function App() {
         decreaseChooseTime();
       }, 1000);
       setChooseTimeInterval(intervalId);
-
       if (bigTime) {
         clearInterval(bigTime);
         setBigTime(null);
@@ -122,6 +155,7 @@ function App() {
         setChooseTimeInterval(null);
       }
       setChooseTime(15);
+      sounds.roundStart.play();
 
       setDrawTimeLeft(drawTime);
 
@@ -139,13 +173,19 @@ function App() {
       addHint(data);
     });
 
+    socket.on("reveal-word", (word) => {
+      setCurrentWord(word);
+    });
+
     socket.on("game-end", () => {
       setGameState("postGame");
-
+      sounds.gameOver.play();
       if (bigTime) {
         clearInterval(bigTime);
         setBigTime(null);
       }
+      // fix overlay opacity issue
+      if (ctx) ctx.clearRect(0, 0, canvasWidth, canvasHeight);
     });
 
     let lastX = null;
@@ -199,6 +239,8 @@ function App() {
       socket.off("drawing-data");
       socket.off("draw-end");
       socket.off("canvas-cleared");
+      socket.off("reveal-word");
+      socket.off("reveal-letter");
 
       if (chooseTimeInterval) {
         clearInterval(chooseTimeInterval);

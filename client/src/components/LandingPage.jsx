@@ -4,11 +4,10 @@ import { socket } from "../utils/socket";
 import toast from "react-hot-toast";
 import AvatarBox from "./CharSelect";
 
-function CreateDropdown() {
+function CreateDropdown({ language, setLanguage }) {
   const { name, avatarUrl, drawTime, setDrawTime, maxRounds, setMaxRounds } =
     useStore();
-  const [maxPlayers, setMaxPlayers] = useState(2);
-  const [language, setLanguage] = useState("hungarian");
+  const [maxPlayers, setMaxPlayers] = useState(4);
 
   const handleCreate = () => {
     if (name) {
@@ -22,14 +21,19 @@ function CreateDropdown() {
           language: language,
         },
       });
-    } else toast.error("Name field missing dxxddd");
+    } else
+      toast.error(language === "english" ? "Name missing" : "Név hiányzik");
   };
 
   return (
     <div className="w-[400px] shadow-lg flex flex-col gap-4 bg-zinc-700 p-4 rounded-lg">
-      <div className="text-lg text-center">Create Room</div>
+      <div className="text-lg text-center">
+        {language === "english" ? "Create Room" : "Szoba létrehozás"}
+      </div>
       <div className="flex items-center justify-between">
-        <div className="w-1/3">Players</div>
+        <div className="w-1/3">
+          {language === "english" ? "Players" : "Játékosok"}
+        </div>
         <select
           value={maxPlayers}
           onChange={(e) => setMaxPlayers(Number(e.target.value))}
@@ -42,7 +46,9 @@ function CreateDropdown() {
         </select>
       </div>
       <div className="flex justify-between">
-        <div className="w-1/3">Drawtime</div>
+        <div className="w-1/3">
+          {language === "english" ? "Drawtime" : "Idő"}
+        </div>
         <select
           value={drawTime}
           onChange={(e) => setDrawTime(Number(e.target.value))}
@@ -55,7 +61,9 @@ function CreateDropdown() {
         </select>
       </div>
       <div className="flex justify-between">
-        <div className="w-1/3">Rounds</div>
+        <div className="w-1/3">
+          {language === "english" ? "Rounds" : "Körök"}
+        </div>
         <select
           value={maxRounds}
           onChange={(e) => setMaxRounds(Number(e.target.value))}
@@ -68,27 +76,33 @@ function CreateDropdown() {
         </select>
       </div>
       <div className="flex justify-between">
-        <div className="w-1/3">Language</div>
+        <div className="w-1/3">
+          {language === "english" ? "Language" : "Nyelv"}
+        </div>
         <select
           value={language}
           onChange={(e) => setLanguage(e.target.value)}
           className="w-full text-center p-1 rounded-lg bg-zinc-700 border-2 border-zinc-600 hover:border-zinc-500 focus:border-zinc-500 outline-none shadow-lg"
         >
-          <option value="hungarian">Hungarian</option>
-          <option value="english">English</option>
+          <option value="hungarian">
+            {language === "english" ? "Hungarian" : "Magyar"}
+          </option>
+          <option value="english">
+            {language === "english" ? "English" : "Angol"}
+          </option>
         </select>
       </div>
       <button
         onClick={handleCreate}
         className="p-2 border-2 hover:border-zinc-500 rounded-lg w-full border-zinc-600 shadow-lg"
       >
-        Create
+        {language === "english" ? "Create" : "Létrehoz"}
       </button>
     </div>
   );
 }
 
-function JoinDropdown() {
+function JoinDropdown({ language, setLanguage }) {
   const { name, avatarUrl } = useStore();
   const [roomCode, setRoomCode] = useState("");
 
@@ -99,16 +113,23 @@ function JoinDropdown() {
         name: name,
         avatarUrl: avatarUrl,
       });
-    } else toast.error("Name or Room Code missing");
+    } else
+      toast.error(
+        language === "english"
+          ? "Name or Room Code missing"
+          : "Név vagy Szoba kód hiányzik",
+      );
   };
 
   return (
     <div className="w-[400px] bg-zinc-700 p-4 rounded-lg shadow-lg">
-      <div className="mb-4 text-center text-lg">Join Room</div>
+      <div className="mb-4 text-center text-lg">
+        {language === "english" ? "Join Room" : "Szoba csatlakozás"}
+      </div>
       <input
         value={roomCode}
         onChange={(e) => setRoomCode(e.target.value)}
-        placeholder="Room code"
+        placeholder={language === "english" ? "Room Code" : "Szoba kód"}
         className="w-full shadow-lg focus:outline focus:outline-2 focus:outline-zinc-500 rounded-lg p-2 mb-4 bg-zinc-600 text-white"
         type="text"
       />
@@ -116,7 +137,7 @@ function JoinDropdown() {
         onClick={handleJoin}
         className="p-2 border-2 hover:border-zinc-500 rounded-lg w-full border-zinc-600 shadow-lg"
       >
-        Join
+        {language === "english" ? "Join" : "Csatlakoz"}
       </button>
     </div>
   );
@@ -124,19 +145,21 @@ function JoinDropdown() {
 
 function LandingPage() {
   const [dropdownPage, setDropdownPage] = useState(false);
+  const [language, setLanguage] = useState("english");
 
   const { name, setName } = useStore();
 
   return (
-    <div className="w-[400px] self-start mt-20">
-      <div className="p-4 rounded-lg bg-zinc-700 mb-4">
+    <div className="-mt-44 flex items-start gap-4">
+      <AvatarBox />
+      <div className="p-4 rounded-lg bg-zinc-700 mb-4 w-[400px] relative">
         <h1 className="mb-4 text-2xl text-center">Doodl.io</h1>
         <input
           value={name}
           onChange={(e) => setName(e.target.value)}
           className="w-full shadow-lg focus:outline focus:outline-2 focus:outline-zinc-500 rounded-lg p-2 bg-zinc-600 text-white mb-4"
           type="text"
-          placeholder="Enter name"
+          placeholder={language === "english" ? "Enter name" : "Írd be a neved"}
         />
         <div className="flex justify-between gap-2">
           <button
@@ -147,7 +170,7 @@ function LandingPage() {
                 : "bg-zinc-700 border-zinc-600"
             }`}
           >
-            Create Room
+            {language === "english" ? "Create Room" : "Szoba létrehozás"}
           </button>
           <button
             onClick={() => setDropdownPage(false)}
@@ -157,29 +180,19 @@ function LandingPage() {
                 : "bg-zinc-700 border-zinc-600"
             }`}
           >
-            Join Room
+            {language === "english" ? "Join Room" : "Szoba csatlakozás"}
           </button>
         </div>
+        <div className="absolute mt-8 -left-0">
+          {dropdownPage ? (
+            <CreateDropdown language={language} setLanguage={setLanguage} />
+          ) : (
+            <JoinDropdown language={language} setLanguage={setLanguage} />
+          )}
+        </div>
       </div>
-      <div>{dropdownPage ? <CreateDropdown /> : <JoinDropdown />}</div>
     </div>
   );
 }
 
-//LANDINGPAGE avatarral
-function LandingPageWithAvatar() {
-  return (
-    <div className="flex gap-4 items-center">
-      <div
-        className="flex-shrink-0"
-        style={{ height: "290px", width: "250px" }}
-      >
-        <AvatarBox />
-      </div>
-
-      <LandingPage />
-    </div>
-  );
-}
-
-export default LandingPageWithAvatar;
+export default LandingPage;

@@ -23,20 +23,30 @@ function Message({ senderId, name, message }) {
 
 function ChatPanel() {
   const [inputText, setInputText] = useState("");
-  const { name, myRoomId, chatMessages, mySocketId, drawerId } = useStore();
+  const {
+    name,
+    myRoomId,
+    chatMessages,
+    mySocketId,
+    drawerId,
+    language,
+    gameState,
+  } = useStore();
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (gameState !== "playing" || !inputText) return;
+
     socket.emit("send-message", {
       name: name,
       roomId: myRoomId,
-      message: inputText,
+      message: inputText.trim(),
     });
     setInputText("");
   };
 
   return (
-    <div className="flex-shrink-0 w-[275px] flex flex-col bg-zinc-700 p-3 rounded-lg gap-3 h-[600px]">
+    <div className="flex-shrink-0 w-[275px] flex flex-col bg-zinc-700 p-3 rounded-lg gap-3 h-[600px] select-none">
       <div className="flex-grow bg-zinc-700 pr-1 flex flex-col gap-[1px] rounded-lg overflow-y-auto overflow-x-hidden">
         {chatMessages.map((item, index) => (
           <Message
@@ -50,10 +60,12 @@ function ChatPanel() {
       <div>
         <form onSubmit={handleSubmit}>
           <input
-            disabled={drawerId === mySocketId}
+            disabled={drawerId === mySocketId || gameState !== "playing"}
             value={inputText}
             onChange={(e) => setInputText(e.target.value)}
-            placeholder="Guess something..."
+            placeholder={
+              language === "english" ? "Guess something..." : "Írj valamit"
+            }
             className="w-full shadow-lg focus:outline focus:outline-2 focus:outline-zinc-500 rounded-lg p-2 bg-zinc-600 text-white disabled:cursor-not-allowed"
             type="text"
           />

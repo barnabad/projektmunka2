@@ -16,12 +16,12 @@ function PlayerCard({
     <div className="p-2 rounded-lg bg-zinc-600 flex items-center justify-between mr-1 relative">
       <div>
         <div className="flex gap-3 font-semibold ">
-          <div>#{place}</div>
+          {/* <div>#{place}</div> */}
           <div
             className={`text-lg ${mySocketId === playerId && "text-blue-400"}`}
             title={name}
           >
-            {name.length > 12 ? name.substring(0, 12) + "..." : name}
+            {name.length > 15 ? name.substring(0, 15) + "..." : name}
           </div>
         </div>
         <div className="flex gap-2">
@@ -52,7 +52,7 @@ function PlayersPanel() {
 
   return (
     <div className="w-[275px] overflow-hidden max-h-[600px] flex-shrink-0 bg-zinc-700 rounded-lg p-3 h-full">
-      <div className="overflow-y-scroll flex flex-col gap-3 max-h-[576px]">
+      <div className="overflow-y-scroll flex flex-col gap-3 max-h-[576px] select-none">
         {players.map((item, index) => (
           <PlayerCard
             key={item.playerId}

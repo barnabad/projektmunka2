@@ -28,15 +28,63 @@ function AvatarBox() {
   }
 
   const skinColor = useMemo(
-    () => ["614335", "ae5d29", "d08b5b", "e8d5a7", "ffdbb4", "10ff30"],
+    () => ["8d5524", "c68642", "e0ac69", "f1c27d", "ffdbac", "31a30f"],
     []
   );
   const hatStyle = useMemo(
-    () => ["hijab", "frizzle", "winterHat02", "turban", "shavedSides", "fro"],
+    () => [
+      "bigHair",
+      "bob",
+      "bun",
+      "curly",
+      "curvy",
+      "dreads",
+      "dreads01",
+      "dreads02",
+      "frida",
+      "frizzle",
+      "fro",
+      "froBand",
+      "hat",
+      "hijab",
+      "longButNotTooLong",
+      "miaWallace",
+      "shaggy",
+      "shaggyMullet",
+      "shavedSides",
+      "shortCurly",
+      "shortFlat",
+      "shortRound",
+      "shortWaved",
+      "sides",
+      "straight01",
+      "straight02",
+      "straightAndStrand",
+      "theCaesar",
+      "theCaesarAndSidePart",
+      "turban",
+      "winterHat1",
+      "winterHat02",
+      "winterHat03",
+      "winterHat04",
+    ],
     []
   );
   const eyeStyle = useMemo(
-    () => ["closed", "winkWacky", "side", "eyeRoll", "hearts", "cry"],
+    () => [
+      "closed",
+      "cry",
+      "default",
+      "eyeRoll",
+      "happy",
+      "hearts",
+      "side",
+      "squint",
+      "surprised",
+      "wink",
+      "winkWacky",
+      "xDizzy",
+    ],
     []
   );
 

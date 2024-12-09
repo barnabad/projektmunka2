@@ -1,11 +1,19 @@
 {
   "name": "doodl-client",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
+  "author": {
+    "name": "Barnabás Tóth"
+  },
+  "contributors": [
+    "Alex Nagy",
+    "Péter István Gogolyák"
+  ],
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "buildWin": "vite build && xcopy dist\\* ..\\server\\public /E /Y",
+    "buildLin": "vite build && cp -rf dist/* ../server/public",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
   },
@@ -13,6 +21,7 @@
     "@radix-ui/react-aspect-ratio": "^1.0.3",
     "@radix-ui/react-popover": "^1.1.2",
     "@radix-ui/react-slider": "^1.2.1",
+    "howler": "^2.2.4",
     "lucide-react": "^0.379.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

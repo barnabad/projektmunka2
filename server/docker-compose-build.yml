@@ -1,0 +1,17 @@
+services:
+  doodl-cont:
+    # Build context pointing to the current directory
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    image: dumach/doodl:latest
+    container_name: doodl-cont
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: production
+      USERNAME: your-username
+      # password must be and md5 hash
+      PASSWORD: your-password
+      IP: 127.0.0.1
