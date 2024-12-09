@@ -158,6 +158,48 @@ function choosingWordLoop(
   const intervalId = setInterval(checkValue, 1000);
 }
 
+function nextRoundOrEndGame(
+  io: Server,
+  ROOMS: RoomContainer,
+  room: Room,
+  roomId: string,
+  GameplayloopId: NodeJS.Timeout,
+) {
+  io.to(roomId).emit("reveal-word", room.currentWord);
+  clearInterval(GameplayloopId);
+
+  let nextPlayer = room!.drawersList.pop();
+  room.playersList.forEach((player) => {
+    player.guessed = false;
+  });
+  room.currentWord = "";
+
+  // Ha van következő játékos (kör nem fejeződött be)
+  if (nextPlayer) {
+    console.log("kövi játékos", nextPlayer);
+    room.currentDrawer = nextPlayer;
+    const inputwords = chooseWord(io, roomId, room);
+    // Szó kiválasztás újra indítása
+    choosingWordLoop(io, ROOMS, roomId, inputwords);
+
+    // Következő kör indítása, ha van még hátralevő körök száma
+  } else {
+    if (room.currentRound === room.maxRound) {
+      // játék vége
+      console.log("jatek vege");
+      io.to(roomId).emit("game-end");
+    } else {
+      // kövi kör
+      room.currentRound += 1;
+      room.drawersList = room.playersList.map((player) => player.playerId);
+      nextPlayer = room.drawersList.pop();
+      nextPlayer ? (room.currentDrawer = nextPlayer) : false;
+      console.log("kövi kör ", room.currentRound);
+      startRound(io, ROOMS, roomId);
+    }
+  }
+}
+
 // Fő játék időzítő - gondoskodik a kör befejezéséről
 // a következő kör indításáról, játék befejezéséről
 function gameplayLoop(io: Server, ROOMS: RoomContainer, roomId: string) {
@@ -166,45 +208,8 @@ function gameplayLoop(io: Server, ROOMS: RoomContainer, roomId: string) {
 
   // Kör időzítő indítása, végén felfedi a szót és indul az újabb menet
   const roundTimer = setTimeout(() => {
-    io.to(roomId).emit("reveal-word", room.currentWord);
-    clearInterval(GameplayloopId);
-
-    let nextPlayer = room!.drawersList.pop();
-    room.playersList.forEach((player) => {
-      player.guessed = false;
-    });
-    room.currentWord = "";
-
-    // Ha van következő játékos (kör nem fejeződött be)
-    if (nextPlayer) {
-      //console.log("kövi játékos", nextPlayer);
-      room.currentDrawer = nextPlayer;
-      const inputwords = chooseWord(io, roomId, room);
-      // Szó kiválasztás újra indítása
-      choosingWordLoop(io, ROOMS, roomId, inputwords);
-
-      // Következő kör indítása, ha van még hátralevő körök száma
-    } else {
-      if (room.currentRound === room.maxRound) {
-        // játék vége
-        //console.log("jatek vege");
-        io.to(roomId).emit("game-end");
-      } else {
-        // kövi kör
-        room.currentRound += 1;
-        room.drawersList = room.playersList.map((player) => player.playerId);
-        nextPlayer = room.drawersList.pop();
-        nextPlayer ? (room.currentDrawer = nextPlayer) : false;
-        //console.log("kövi kör ", room.currentRound);
-        startRound(io, ROOMS, roomId);
-      }
-    }
+    nextRoundOrEndGame(io, ROOMS, room, roomId, GameplayloopId);
   }, room.drawTime * 1000);
-
-  // Karakterek felfedése
-  let revealedPos: number[] = [];
-  const felfedDB = Math.ceil(room.currentWord.length / 4);
-  //console.log("felfed darab: " + felfedDB);
 
   // folyamatosan másodpercenként lefut
   const GameplayloopId = setInterval(() => {
@@ -215,7 +220,22 @@ function gameplayLoop(io: Server, ROOMS: RoomContainer, roomId: string) {
       return;
     }
 
+    // Ha kilép a rajzoló menjen a következő körre
+    if (!room.containsPlayer(room.currentDrawer)) {
+      clearInterval(GameplayloopId);
+      clearTimeout(roundTimer);
+      nextRoundOrEndGame(io, ROOMS, room, roomId, GameplayloopId);
+      console.log("The drawer disconnected from room");
+      return;
+    }
+
     idozito--;
+    //console.log(idozito);
+
+    // Karakterek felfedése
+    let revealedPos: number[] = [];
+    const felfedDB = Math.ceil(room.currentWord.length / 4);
+    //console.log("felfed darab: " + felfedDB);
 
     // Ha van még mit felfedni és 7 másodperc eltelt akkor
     // felfed egy random karaktert

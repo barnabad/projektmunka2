@@ -7,7 +7,7 @@ import { sendConnectionMsg } from "./chat.js";
 
 export function roomSocket(io: Server, socket: Socket, ROOMS: RoomContainer) {
   socket.on("create-room", (data: CreateRoomType) =>
-    createRoom(io, socket, data, ROOMS)
+    createRoom(io, socket, data, ROOMS),
   );
 
   socket.on(
@@ -20,7 +20,7 @@ export function roomSocket(io: Server, socket: Socket, ROOMS: RoomContainer) {
       roomId: string;
       name: string;
       avatarUrl: string;
-    }) => joinRoom(io, socket, ROOMS, roomId, name, avatarUrl)
+    }) => joinRoom(io, socket, ROOMS, roomId, name, avatarUrl),
   );
 
   socket.on("leave-room", () => leaveRoom(io, socket, ROOMS));
@@ -49,7 +49,7 @@ function createRoom(
   io: Server,
   socket: Socket,
   { name, avatarUrl, options }: CreateRoomType,
-  ROOMS: RoomContainer
+  ROOMS: RoomContainer,
 ) {
   let roomId: string = "";
   do {
@@ -67,8 +67,8 @@ function createRoom(
         options.maxRounds,
         options.drawTime,
         socket.id,
-        [new Player(socket.id, name, avatarUrl)]
-      )
+        [new Player(socket.id, name, avatarUrl)],
+      ),
     );
     // Kliens értesítése
     joinSuccessful(
@@ -77,7 +77,7 @@ function createRoom(
       roomId,
       ROOMS.get(roomId)!.drawTime,
       ROOMS.get(roomId)!.maxRound,
-      ROOMS.get(roomId)!.language
+      ROOMS.get(roomId)!.language,
     );
     updatePlayers(io, roomId, ROOMS.get(roomId)!.playersList);
     sendConnectionMsg(io, roomId, name, true, options.language);
@@ -96,7 +96,7 @@ function joinRoom(
   ROOMS: RoomContainer,
   roomId: string,
   name: string,
-  avatarUrl: string
+  avatarUrl: string,
 ) {
   const room = ROOMS.get(roomId);
 
@@ -118,7 +118,7 @@ function joinRoom(
         roomId,
         room.drawTime,
         room.maxRound,
-        room.language
+        room.language,
       );
       updatePlayers(io, roomId, room.playersList);
       sendConnectionMsg(io, roomId, name, true, room.language);
@@ -150,7 +150,7 @@ export function leaveRoom(io: Server, socket: Socket, ROOMS: RoomContainer) {
           room[0],
           removedPlayer.name,
           false,
-          room[1].language
+          room[1].language,
         );
         // Handle owner disconnect
         if (room[1].ownerId === removedPlayer.playerId) {
@@ -183,7 +183,7 @@ function joinSuccessful(
   roomCode: string,
   drawTime: number,
   maxRound: number,
-  language: string
+  language: string,
 ) {
   socket.emit("join-successful", {
     ownerId: ownerId,
@@ -202,12 +202,12 @@ export function updatePlayers(io: Server, roomId: string, players: Player[]) {
 // Szoba törlése, ha nincs játékos benne
 export function deleteRoom(
   ROOMS: RoomContainer,
-  roomId: string
+  roomId: string,
 ): boolean | undefined {
   let result: boolean | undefined;
   if (ROOMS.get(roomId)?.playersList.length === 0) {
     result = ROOMS.delete(roomId);
-    //console.log("Room deleted with id: ", roomId);
+    console.log("Room deleted with id: ", roomId);
   }
   return result;
 }

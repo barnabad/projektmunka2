@@ -7,7 +7,7 @@ import AvatarBox from "./CharSelect";
 function CreateDropdown({ language, setLanguage }) {
   const { name, avatarUrl, drawTime, setDrawTime, maxRounds, setMaxRounds } =
     useStore();
-  const [maxPlayers, setMaxPlayers] = useState(2);
+  const [maxPlayers, setMaxPlayers] = useState(4);
 
   const handleCreate = () => {
     if (name) {
@@ -117,7 +117,7 @@ function JoinDropdown({ language, setLanguage }) {
       toast.error(
         language === "english"
           ? "Name or Room Code missing"
-          : "Név vagy Szoba kód hiányzik"
+          : "Név vagy Szoba kód hiányzik",
       );
   };
 

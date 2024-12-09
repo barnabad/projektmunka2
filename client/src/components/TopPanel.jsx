@@ -38,8 +38,8 @@ function TopPanel() {
           </button>
         </div>
       )}
-      <div className="cursor-pointer w-[275px] flex ml-auto justify-end items-center p-3">
-        <Settings size={30} />
+      <div className="w-[275px] flex ml-auto justify-end items-center p-3">
+        {/* <Settings size={30} /> */}
       </div>
     </div>
   );
