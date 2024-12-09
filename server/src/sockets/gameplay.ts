@@ -1,6 +1,6 @@
 import { Server as SocketIoServer, Socket, Server } from "socket.io";
 import { RoomContainer } from "./setup.js";
-import { deleteRoom } from "./room.js";
+import { deleteRoom, updatePlayers } from "./room.js";
 import { sendError } from "../utils/notifications.js";
 import { Room } from "../models/RoomClass.js";
 import { hungarianWords } from "../data/hungarianWords.js";
@@ -37,7 +37,7 @@ export function gamePlaySocket(
   });
 
   socket.on("play-again", (roomId) => {
-    console.log("Game restarted is room: ", roomId);
+    console.log("Game restarted in room: ", roomId);
     startGame(io, socket, roomId, ROOMS);
   });
 }
@@ -61,6 +61,10 @@ function startGame(
     sendError(socket, "Only the room owner can start the game");
     return;
   }
+
+  // Előkészítés
+  room.playersList.forEach((player) => (player.score = 0));
+  updatePlayers(io, roomId, room.playersList);
 
   // Rajzolók tömb feltöltése, legelső játékos kiszedése
   room.drawersList = room.playersList.map((player) => player.playerId);
@@ -139,10 +143,10 @@ function choosingWordLoop(
       inputwords[Math.floor(Math.random() * inputwords!.length)];
     room.currentWord = room.currentWord.toLocaleLowerCase();
 
-    console.log(
+    /*console.log(
       "Az idő lejárt, alapértelmezett érték lett beállítva: ",
       room.currentWord,
-    );
+    );*/
 
     // Játékosok értesítése
     io.to(roomId).emit("update-word-length", room.currentWord.length);
