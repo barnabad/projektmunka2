@@ -118,7 +118,7 @@ export function PostGameContent() {
   const uniqueScores = new Set();
   players.forEach((player) => uniqueScores.add(player.score));
   const sortedScores = [...uniqueScores].sort((a, b) => b - a);
-  const sortedPlayers = players.sort((a, b) => b.score - a.score);
+  const sortedPlayers = [...players].sort((a, b) => b.score - a.score);
 
   const playAgain = () => {
     socket.emit("play-again", myRoomId);
