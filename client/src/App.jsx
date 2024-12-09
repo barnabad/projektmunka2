@@ -78,7 +78,7 @@ function App() {
         console.log("join success");
         // hang ide
         sounds.joinSuccess.play();
-      }
+      },
     );
     socket.on("connect_error", () => toast.error("Connection error"));
     socket.on("error", (error) => toast.error(error));
@@ -180,6 +180,8 @@ function App() {
         clearInterval(bigTime);
         setBigTime(null);
       }
+      // fix overlay opacity issue
+      if (ctx) ctx.clearRect(0, 0, canvasWidth, canvasHeight);
     });
 
     let lastX = null;

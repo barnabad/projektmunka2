@@ -16,12 +16,12 @@ function PlayerCard({
     <div className="p-2 rounded-lg bg-zinc-600 flex items-center justify-between mr-1 relative">
       <div>
         <div className="flex gap-3 font-semibold ">
-          <div>#{place}</div>
+          {/* <div>#{place}</div> */}
           <div
             className={`text-lg ${mySocketId === playerId && "text-blue-400"}`}
             title={name}
           >
-            {name.length > 12 ? name.substring(0, 12) + "..." : name}
+            {name.length > 15 ? name.substring(0, 15) + "..." : name}
           </div>
         </div>
         <div className="flex gap-2">

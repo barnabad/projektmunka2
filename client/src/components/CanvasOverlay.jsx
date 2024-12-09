@@ -1,5 +1,6 @@
 import { useStore } from "../store/store";
 import { socket } from "../utils/socket";
+import { Trophy } from "lucide-react";
 
 export function PreGameContent() {
   const { ownerId, mySocketId, myRoomId, language } = useStore();
@@ -112,7 +113,12 @@ export function RoundEndContent() {
 }
 
 export function PostGameContent() {
-  const { mySocketId, ownerId, myRoomId, language } = useStore();
+  const { mySocketId, ownerId, myRoomId, language, players } = useStore();
+
+  const uniqueScores = new Set();
+  players.forEach((player) => uniqueScores.add(player.score));
+  const sortedScores = [...uniqueScores].sort((a, b) => b - a);
+  const sortedPlayers = players.sort((a, b) => b.score - a.score);
 
   const playAgain = () => {
     socket.emit("play-again", myRoomId);
@@ -120,9 +126,26 @@ export function PostGameContent() {
 
   return (
     <div className="flex flex-col gap-5 text-lg text-center">
-      <div>
-        {/*TODO: Eredmenyek ide*/}
+      <div className="font-semibold">
         {language === "english" ? "Results..." : "Eredmények..."}
+      </div>
+      <div className="flex flex-col gap-2 z-40">
+        {sortedPlayers.map((player) => (
+          <div key={player.playerId} className="flex gap-2 justify-end">
+            {player.score === sortedScores[0] && (
+              <Trophy className="text-yellow-500" />
+            )}
+            {player.score === sortedScores[1] && (
+              <Trophy className="text-gray-400" />
+            )}
+            {player.score === sortedScores[2] && (
+              <Trophy className="text-orange-800" />
+            )}
+            <span>
+              {player.name} - {player.score}
+            </span>
+          </div>
+        ))}
       </div>
       {mySocketId === ownerId && (
         <button
