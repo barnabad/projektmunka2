@@ -8,7 +8,7 @@ export const createGameSlice = (set) => ({
   round: 0,
   maxRounds: 2,
   language: "",
-  drawTime: 20,
+  drawTime: 60,
   wordLength: 0,
   currentWord: "",
   chooseTime: 15,

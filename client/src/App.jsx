@@ -173,6 +173,10 @@ function App() {
       addHint(data);
     });
 
+    socket.on("reveal-word", (word) => {
+      setCurrentWord(word);
+    });
+
     socket.on("game-end", () => {
       setGameState("postGame");
       sounds.gameOver.play();
@@ -235,6 +239,8 @@ function App() {
       socket.off("drawing-data");
       socket.off("draw-end");
       socket.off("canvas-cleared");
+      socket.off("reveal-word");
+      socket.off("reveal-letter");
 
       if (chooseTimeInterval) {
         clearInterval(chooseTimeInterval);
