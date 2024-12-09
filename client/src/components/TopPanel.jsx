@@ -12,19 +12,19 @@ function TopPanel() {
       toast.success(
         language === "english"
           ? "Room code copied to clipboard"
-          : "Szoba kód másolva a vágólapra"
+          : "Szoba kód másolva a vágólapra",
       );
     } catch (error) {
       toast.error(
         language === "english"
           ? "Error while copying to clipboard"
-          : "Hiba a kód másolása közben"
+          : "Hiba a kód másolása közben",
       );
     }
   };
 
   return (
-    <div className="flex items-center gap-3 bg-zinc-700 rounded-lg">
+    <div className="flex items-center gap-3 bg-zinc-700 rounded-lg select-none">
       <div className="flex gap-2 items-center text-lg w-[275px] p-3">
         {language === "english" ? "Time left:" : "Idő:"}
         <span className="font-semibold">{drawTimeLeft}s</span>

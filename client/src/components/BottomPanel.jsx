@@ -104,7 +104,7 @@ function BottomPanel() {
   };
 
   return (
-    <div className="rounded-lg bg-zinc-700 flex gap-3">
+    <div className="rounded-lg bg-zinc-700 flex gap-3 select-none">
       <div className="w-[275px] p-3 text-xl flex justify-center items-center font-semibold">
         {`${language === "english" ? "Round" : "Kör"} ${round} / ${maxRounds}`}
       </div>

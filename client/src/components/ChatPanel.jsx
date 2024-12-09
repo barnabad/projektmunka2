@@ -46,7 +46,7 @@ function ChatPanel() {
   };
 
   return (
-    <div className="flex-shrink-0 w-[275px] flex flex-col bg-zinc-700 p-3 rounded-lg gap-3 h-[600px]">
+    <div className="flex-shrink-0 w-[275px] flex flex-col bg-zinc-700 p-3 rounded-lg gap-3 h-[600px] select-none">
       <div className="flex-grow bg-zinc-700 pr-1 flex flex-col gap-[1px] rounded-lg overflow-y-auto overflow-x-hidden">
         {chatMessages.map((item, index) => (
           <Message

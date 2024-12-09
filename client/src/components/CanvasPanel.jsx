@@ -105,7 +105,7 @@ function CanvasPanel() {
   };
 
   return (
-    <div className="w-[800px] h-[600px] relative flex flex-shrink-0 p-3 bg-zinc-700 rounded-lg">
+    <div className="w-[800px] h-[600px] relative flex flex-shrink-0 p-3 bg-zinc-700 rounded-lg select-none">
       <canvas
         ref={canvasRef}
         width={776}

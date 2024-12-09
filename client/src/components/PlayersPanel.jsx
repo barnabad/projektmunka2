@@ -52,7 +52,7 @@ function PlayersPanel() {
 
   return (
     <div className="w-[275px] overflow-hidden max-h-[600px] flex-shrink-0 bg-zinc-700 rounded-lg p-3 h-full">
-      <div className="overflow-y-scroll flex flex-col gap-3 max-h-[576px]">
+      <div className="overflow-y-scroll flex flex-col gap-3 max-h-[576px] select-none">
         {players.map((item, index) => (
           <PlayerCard
             key={item.playerId}
