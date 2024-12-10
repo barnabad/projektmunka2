@@ -211,6 +211,11 @@ function gameplayLoop(io: Server, ROOMS: RoomContainer, roomId: string) {
     nextRoundOrEndGame(io, ROOMS, room, roomId, GameplayloopId);
   }, room.drawTime * 1000);
 
+  // Karakterek felfedése
+  let revealedPos: number[] = [];
+  const felfedDB = Math.ceil(room.currentWord.length / 4);
+  //console.log("felfed darab: " + felfedDB);
+
   // folyamatosan másodpercenként lefut
   const GameplayloopId = setInterval(() => {
     // ha nincs szoba akkor leállítja a számlálókat
@@ -231,11 +236,6 @@ function gameplayLoop(io: Server, ROOMS: RoomContainer, roomId: string) {
 
     idozito--;
     //console.log(idozito);
-
-    // Karakterek felfedése
-    let revealedPos: number[] = [];
-    const felfedDB = Math.ceil(room.currentWord.length / 4);
-    //console.log("felfed darab: " + felfedDB);
 
     // Ha van még mit felfedni és 7 másodperc eltelt akkor
     // felfed egy random karaktert
