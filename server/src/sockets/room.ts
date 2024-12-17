@@ -4,6 +4,7 @@ import { Room } from "../models/RoomClass.js";
 import { Player } from "../models/PlayerClass.js";
 import { sendError } from "../utils/notifications.js";
 import { sendConnectionMsg } from "./chat.js";
+import { log } from "../utils/logger.js";
 
 export function roomSocket(io: Server, socket: Socket, ROOMS: RoomContainer) {
   socket.on("create-room", (data: CreateRoomType) =>
@@ -86,7 +87,8 @@ function createRoom(
     options.language === "hungarian"
       ? sendError(socket, "Hiba a szoba létrehozásában")
       : sendError(socket, "Error creating room");
-    console.log("Error in create-room", error);
+    //console.log("Error in create-room", error);
+    log("ERROR", "Error in create-room: " + error);
   }
 }
 
@@ -104,7 +106,8 @@ function joinRoom(
     // Ellenőrzi van-e elég férőhely a szobában
     if (room.playersList.length === room.maxPlayers) {
       sendError(socket, "Room is already full");
-      console.log(`Room: ${roomId} is already full`);
+      //console.log(`Room: ${roomId} is already full`);
+      log("WARNING", `Room: ${roomId} is already full`);
       return;
     }
 
@@ -127,11 +130,13 @@ function joinRoom(
       room!.language == "hungarian"
         ? sendError(socket, "Hiba történt a szobába csatlakozás során")
         : sendError(socket, "Error joining room");
-      console.error("Error joining room", error);
+      log("ERROR", "Error joining room: " + error);
+      //console.error("Error joining room", error);
     }
   } else {
     sendError(socket, "Room doesn't exist");
-    console.error(`Room with id ${roomId} does not exist`);
+    //console.error(`Room with id ${roomId} does not exist`);
+    log("WARNING", `Room with id ${roomId} does not exist`);
   }
 }
 
@@ -207,7 +212,8 @@ export function deleteRoom(
   let result: boolean | undefined;
   if (ROOMS.get(roomId)?.playersList.length === 0) {
     result = ROOMS.delete(roomId);
-    console.log("Room deleted with id: ", roomId);
+    //console.log("Room deleted with id: ", roomId);
+    log("INFO", "Room deleted with id: " + roomId);
   }
   return result;
 }

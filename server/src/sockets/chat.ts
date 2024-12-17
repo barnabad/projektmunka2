@@ -52,12 +52,10 @@ export function chatSocket(io: Server, socket: Socket, ROOMS: RoomContainer) {
           senderId: "server",
         });
       updatePlayers(io, roomId, room!.playersList);
-      //console.log("eltalálta");
     }
     // Sima üzenet
     else {
       io.to(roomId).emit("new-message", { name, message, senderId: socket.id });
-      //console.log("sima üzenet");
     }
   });
 }

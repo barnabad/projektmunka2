@@ -2,6 +2,7 @@ import { Server as SocketIoServer } from "socket.io";
 import { instrument } from "@socket.io/admin-ui";
 import { setupSockets } from "./sockets/setup.js";
 import { socketConfig } from "./config/socketConfig.js";
+import { log } from "./utils/logger.js";
 import dotenv from "dotenv";
 import express from "express";
 import https from "https";
@@ -11,7 +12,7 @@ import fs from "fs";
 dotenv.config();
 
 const PORT = process.env.PORT || 3000;
-const IP = process.env.IP || "127.0.0.1";
+const IP = process.env.IP || "localhost";
 
 // Path to SSL certificate and key
 const SSL_CERT_PATH = "./certs/cert.pem";
@@ -19,6 +20,7 @@ const SSL_KEY_PATH = "./certs/key.pem";
 
 // Create Express app
 const app = express();
+app.disable("x-powered-by");
 
 // Read SSL certificate and key
 const httpsOptions = {
@@ -28,7 +30,8 @@ const httpsOptions = {
 
 // Create HTTPS server
 const server = https.createServer(httpsOptions, app).listen(PORT, () => {
-  console.log(`HTTPS Server running at https://${IP}:${PORT}`);
+  //console.log(`HTTPS Server running at https://${IP}:${PORT}`);
+  log("INFO", `HTTPS Server running at https://${IP}:${PORT}`);
 });
 
 // Serving static files
@@ -36,9 +39,11 @@ app.use(express.static("public"));
 
 // Creating WebSocket
 const io = new SocketIoServer(server, socketConfig);
-console.log(process.env.NODE_ENV);
+const nodeEnv = process.env.NODE_ENV || "production";
+//console.log(process.env.NODE_ENV);
+log("INFO", nodeEnv);
 
-if (process.env.NODE_ENV !== "production") {
+if (nodeEnv !== "production") {
   instrument(io, { auth: false, mode: "development" });
 } else {
   instrument(io, {

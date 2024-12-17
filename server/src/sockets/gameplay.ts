@@ -5,6 +5,7 @@ import { sendError } from "../utils/notifications.js";
 import { Room } from "../models/RoomClass.js";
 import { hungarianWords } from "../data/hungarianWords.js";
 import { englishWords } from "../data/englishWords.js";
+import { log } from "../utils/logger.js";
 
 export function gamePlaySocket(
   io: SocketIoServer,
@@ -25,7 +26,6 @@ export function gamePlaySocket(
     // TODO: eltárolni minden szobanak a pixel adatait, hogy a késobb csatlakozot
     // jatekosnak is ki lehessen rajzoni a teljes cuccot
     io.to(roomId).except(socket.id).emit("drawing-data", data);
-    //console.log(data);
   });
 
   socket.on("draw-end", (roomId) => {
@@ -37,7 +37,7 @@ export function gamePlaySocket(
   });
 
   socket.on("play-again", (roomId) => {
-    console.log("Game restarted in room: ", roomId);
+    //console.log("Game restarted in room: ", roomId);
     startGame(io, socket, roomId, ROOMS);
   });
 }
@@ -78,7 +78,7 @@ function startGame(
   room.currentDrawer = nextPlayer;
   room.currentRound = 1;
   startRound(io, ROOMS, roomId);
-  console.log("game started");
+  //console.log("game started");
 }
 
 // Kör indítása segéd függvény
@@ -176,7 +176,7 @@ function nextRoundOrEndGame(
 
   // Ha van következő játékos (kör nem fejeződött be)
   if (nextPlayer) {
-    console.log("kövi játékos", nextPlayer);
+    //console.log("kövi játékos", nextPlayer);
     room.currentDrawer = nextPlayer;
     const inputwords = chooseWord(io, roomId, room);
     // Szó kiválasztás újra indítása
@@ -186,7 +186,7 @@ function nextRoundOrEndGame(
   } else {
     if (room.currentRound === room.maxRound) {
       // játék vége
-      console.log("jatek vege");
+      //console.log("jatek vege");
       io.to(roomId).emit("game-end");
     } else {
       // kövi kör
@@ -194,7 +194,7 @@ function nextRoundOrEndGame(
       room.drawersList = room.playersList.map((player) => player.playerId);
       nextPlayer = room.drawersList.pop();
       nextPlayer ? (room.currentDrawer = nextPlayer) : false;
-      console.log("kövi kör ", room.currentRound);
+      //console.log("kövi kör ", room.currentRound);
       startRound(io, ROOMS, roomId);
     }
   }
@@ -230,7 +230,11 @@ function gameplayLoop(io: Server, ROOMS: RoomContainer, roomId: string) {
       clearInterval(GameplayloopId);
       clearTimeout(roundTimer);
       nextRoundOrEndGame(io, ROOMS, room, roomId, GameplayloopId);
-      console.log("The drawer disconnected from room");
+      log(
+        "WARNING",
+        "The drawer disconnected from room - mitigating ownership",
+      );
+      //console.log("The drawer disconnected from room");
       return;
     }
 
